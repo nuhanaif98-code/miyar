@@ -1,0 +1,2415 @@
+/* =====================================================
+   معيار | صفحة القرارات
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family:
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    direction: rtl;
+
+    color: #263f4f;
+    background: #f5f2ec;
+
+    overflow-x: hidden;
+}
+
+body.menu-open,
+body.modal-open {
+    overflow: hidden;
+}
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+
+/* =====================================================
+   الصفحة
+===================================================== */
+
+.decisions-page {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+}
+
+
+/* =====================================================
+   عناصر الجوال
+===================================================== */
+
+.mobile-header,
+.mobile-menu-btn,
+.sidebar-overlay {
+    display: none;
+}
+
+
+/* =====================================================
+   القائمة الجانبية
+===================================================== */
+
+.sidebar {
+    width: 245px;
+    height: 100vh;
+
+    position: fixed;
+    top: 0;
+    right: 0;
+
+    z-index: 1000;
+
+    padding: 25px 17px;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow-y: auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            #31586c 0%,
+            #3c667a 52%,
+            #456f82 100%
+        );
+
+    box-shadow:
+        -8px 0 28px
+        rgba(38, 59, 70, 0.10);
+}
+
+.sidebar-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    margin-bottom: 25px;
+}
+
+.sidebar-logo img {
+    width: 92px;
+    height: auto;
+
+    object-fit: contain;
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.nav-link {
+    width: 100%;
+    min-height: 44px;
+
+    display: flex;
+    align-items: center;
+
+    padding: 0 14px;
+
+    border-radius: 10px;
+
+    border-right:
+        3px solid
+        transparent;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.78
+        );
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    transition: 0.2s ease;
+}
+
+.nav-link:hover {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.09
+        );
+
+    color: #ffffff;
+}
+
+.nav-link.active {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.14
+        );
+
+    color: #ffffff;
+
+    font-weight: 700;
+
+    border-right-color:
+        #c69a5a;
+}
+
+.logout-btn {
+    width: 100%;
+    min-height: 44px;
+
+    margin-top: auto;
+
+    border-radius: 10px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.24
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+    color: #ffffff;
+
+    font-size: 11px;
+}
+
+.logout-btn:hover {
+    background: #b98a4d;
+}
+
+
+/* =====================================================
+   المحتوى الرئيسي
+===================================================== */
+
+.main-content {
+    width:
+        calc(
+            100% - 245px
+        );
+
+    min-height: 100vh;
+
+    margin-right: 245px;
+
+    padding:
+        35px
+        42px
+        50px;
+
+    background-color:
+        #f5f2ec;
+
+    background-image:
+        linear-gradient(
+            rgba(
+                249,
+                247,
+                242,
+                0.10
+            ),
+            rgba(
+                249,
+                247,
+                242,
+                0.10
+            )
+        ),
+        url("assets/background.jpeg");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+
+/* =====================================================
+   رأس الصفحة
+===================================================== */
+
+.topbar {
+    width: 100%;
+
+    margin-bottom: 24px;
+}
+
+.page-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 28px;
+
+    padding:
+        0
+        14px;
+
+    margin-bottom: 9px;
+
+    border-radius: 30px;
+
+    border:
+        1px solid
+        rgba(
+            185,
+            138,
+            77,
+            0.30
+        );
+
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.13
+        );
+
+    color: #9f733c;
+
+    font-size: 9px;
+}
+
+.topbar h1 {
+    margin-bottom: 6px;
+
+    color: #274d62;
+
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.topbar p {
+    max-width: 800px;
+
+    color: #778a95;
+
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+
+/* =====================================================
+   ملخص القرارات
+===================================================== */
+
+.decisions-summary {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+}
+
+.summary-item {
+    min-width: 0;
+    min-height: 100px;
+
+    padding: 17px;
+
+    display: flex;
+    flex-direction: column;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    border-radius: 15px;
+
+    border:
+        1.5px solid
+        #c69a5a;
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.88
+        );
+
+    backdrop-filter:
+        blur(5px);
+
+    box-shadow:
+        0 6px 18px
+        rgba(
+            38,
+            59,
+            70,
+            0.03
+        );
+}
+
+.summary-item span {
+    color: #7d8c95;
+
+    font-size: 9px;
+}
+
+.summary-item strong {
+    color: #31586c;
+
+    font-size: 24px;
+    font-weight: 700;
+}
+
+
+/* =====================================================
+   البحث وزر القرار
+===================================================== */
+
+.toolbar {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px;
+
+    margin-bottom: 25px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(
+            49,
+            88,
+            108,
+            0.12
+        );
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.88
+        );
+
+    backdrop-filter:
+        blur(5px);
+}
+
+.search-box {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.search-box input {
+    width: 100%;
+    height: 44px;
+
+    padding:
+        0
+        14px;
+
+    border:
+        1px solid
+        rgba(
+            49,
+            88,
+            108,
+            0.16
+        );
+
+    border-radius: 10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.88
+        );
+
+    color: #31586c;
+
+    font-size: 10px;
+
+    outline: none;
+}
+
+.search-box input::placeholder {
+    color: #8d999f;
+}
+
+.search-box input:focus {
+    border-color: #c49a5c;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            196,
+            154,
+            92,
+            0.08
+        );
+}
+
+.add-btn {
+    min-width: 155px;
+    height: 44px;
+
+    padding:
+        0
+        20px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #315f75;
+
+    color: #ffffff;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    transition: 0.2s ease;
+}
+
+.add-btn:hover {
+    background: #284f63;
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =====================================================
+   حاوية سجل القرارات
+===================================================== */
+
+.decisions-container {
+    width: 100%;
+
+    padding: 24px;
+
+    border-radius: 18px;
+
+    border:
+        1px solid
+        rgba(
+            49,
+            88,
+            108,
+            0.12
+        );
+
+    border-top:
+        3px solid
+        #c69a5a;
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.92
+        );
+
+    backdrop-filter:
+        blur(6px);
+
+    box-shadow:
+        0 8px 25px
+        rgba(
+            40,
+            61,
+            73,
+            0.05
+        );
+}
+
+
+/* =====================================================
+   عنوان سجل القرارات
+===================================================== */
+
+.section-title {
+    width: 100%;
+
+    display: flex;
+
+    align-items: flex-end;
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+}
+
+.section-title h2 {
+    margin-bottom: 5px;
+
+    color: #31576b;
+
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.section-title p {
+    color: #87949a;
+
+    font-size: 9px;
+
+    line-height: 1.7;
+}
+
+.section-title > span {
+    color: #87949a;
+
+    font-size: 9px;
+
+    white-space: nowrap;
+}
+/* =========================================================
+   شبكة القرارات
+   ========================================================= */
+
+.decisions-grid {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+    align-items: stretch;
+}
+
+
+/* =========================================================
+   بطاقة القرار
+   ========================================================= */
+
+.decision-card {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+
+    padding: 15px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    border:
+        1px solid
+        rgba(62, 87, 101, 0.13) !important;
+
+    border-top:
+        2px solid
+        rgba(185, 138, 77, 0.82) !important;
+
+    border-radius: 13px !important;
+
+    background:
+        rgba(255, 255, 255, 0.62) !important;
+
+    box-shadow:
+        0 4px 14px
+        rgba(40, 61, 73, 0.03) !important;
+
+    overflow: hidden;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+
+.decision-card:hover {
+    transform: translateY(-2px);
+
+    border-color:
+        rgba(185, 138, 77, 0.52) !important;
+
+    box-shadow:
+        0 8px 20px
+        rgba(40, 61, 73, 0.055) !important;
+}
+
+
+/* =========================================================
+   أعلى البطاقة
+   ========================================================= */
+
+.decision-card-header {
+    width: 100% !important;
+
+    display: flex !important;
+
+    flex-direction: row !important;
+
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+
+    gap: 10px !important;
+
+    margin-bottom: 12px !important;
+}
+
+
+.decision-card-header > div:first-child {
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+
+.decision-label {
+    display: block !important;
+
+    margin-bottom: 4px !important;
+
+    color: #b27c3d !important;
+
+    font-size: 7px !important;
+    font-weight: 600 !important;
+}
+
+
+.decision-card-header h3 {
+    margin: 0 !important;
+
+    color: #31576b !important;
+
+    font-size: 13px !important;
+    font-weight: 700 !important;
+
+    line-height: 1.45 !important;
+
+    overflow-wrap: anywhere !important;
+}
+
+
+/* =========================================================
+   نسبة التوافق
+   ========================================================= */
+
+.decision-rate {
+    flex: 0 0 auto !important;
+
+    width: 65px !important;
+    min-width: 65px !important;
+    height: 55px !important;
+
+    padding: 0 !important;
+
+    display: flex !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 10px !important;
+
+    background:
+        rgba(185, 138, 77, 0.12) !important;
+
+    color: #9b713e !important;
+
+    font-size: 15px !important;
+    font-weight: 700 !important;
+
+    text-align: center !important;
+
+    white-space: nowrap !important;
+}
+
+
+/* =========================================================
+   معلومات القرار
+   ========================================================= */
+
+.decision-info {
+    width: 100% !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr)) !important;
+
+    gap: 7px !important;
+
+    margin-bottom: 9px !important;
+}
+
+
+.decision-info-item {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 58px !important;
+
+    padding: 8px 9px !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    align-items: flex-start !important;
+    justify-content: center !important;
+
+    gap: 3px !important;
+
+    border:
+        1px solid
+        rgba(62, 87, 101, 0.07) !important;
+
+    border-radius: 8px !important;
+
+    background:
+        rgba(249, 247, 242, 0.62) !important;
+
+    text-align: right !important;
+
+    overflow: hidden !important;
+}
+
+
+.decision-info-item span {
+    width: 100% !important;
+
+    display: block !important;
+
+    margin: 0 !important;
+
+    color: #87989f !important;
+
+    font-size: 6px !important;
+    font-weight: 400 !important;
+
+    line-height: 1.5 !important;
+
+    text-align: right !important;
+}
+
+
+.decision-info-item strong {
+    width: 100% !important;
+
+    display: block !important;
+
+    margin: 0 !important;
+
+    color: #3d6070 !important;
+
+    font-size: 8px !important;
+    font-weight: 600 !important;
+
+    line-height: 1.5 !important;
+
+    text-align: right !important;
+
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+}
+
+
+/* تاريخ القرار */
+
+.decision-info-item:last-child {
+    grid-column: auto !important;
+}
+
+
+/* =========================================================
+   سبب القرار
+   ========================================================= */
+
+.decision-reason {
+    width: 100% !important;
+
+    min-height: 55px !important;
+
+    padding: 9px 10px !important;
+
+    margin:
+        0
+        0
+        10px !important;
+
+    border:
+        1px solid
+        rgba(185, 138, 77, 0.08) !important;
+
+    border-right:
+        2px solid
+        rgba(185, 138, 77, 0.82) !important;
+
+    border-radius: 8px !important;
+
+    background:
+        rgba(249, 247, 242, 0.64) !important;
+
+    text-align: right !important;
+}
+
+
+.decision-reason span {
+    width: 100% !important;
+
+    display: block !important;
+
+    margin-bottom: 3px !important;
+
+    color: #a2733b !important;
+
+    font-size: 6px !important;
+
+    text-align: right !important;
+}
+
+
+.decision-reason p {
+    width: 100% !important;
+
+    margin: 0 !important;
+
+    color: #667f8b !important;
+
+    font-size: 7px !important;
+
+    line-height: 1.65 !important;
+
+    text-align: right !important;
+
+    overflow-wrap: anywhere !important;
+    word-break: break-word !important;
+}
+
+
+/* =========================================================
+   أزرار بطاقة القرار
+   ========================================================= */
+
+.decision-actions {
+    width: 100% !important;
+
+    display: grid !important;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr)) !important;
+
+    gap: 6px !important;
+
+    padding-top: 9px !important;
+
+    margin-top: auto !important;
+
+    border-top:
+        1px solid
+        rgba(62, 87, 101, 0.08) !important;
+}
+
+
+.decision-actions button {
+    width: 100% !important;
+    height: 32px !important;
+
+    border: none !important;
+
+    border-radius: 8px !important;
+
+    font-size: 7px !important;
+    font-weight: 600 !important;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease !important;
+}
+
+
+/* زر العرض */
+
+.decision-actions .view-btn {
+    background:
+        rgba(49, 88, 108, 0.11) !important;
+
+    color: #31586c !important;
+}
+
+
+.decision-actions .view-btn:hover {
+    background:
+        rgba(49, 88, 108, 0.17) !important;
+
+    transform: translateY(-1px);
+}
+
+
+/* زر التعديل */
+
+.decision-actions .edit-btn {
+    background:
+        rgba(185, 138, 77, 0.12) !important;
+
+    color: #9a6e39 !important;
+}
+
+
+.decision-actions .edit-btn:hover {
+    background:
+        rgba(185, 138, 77, 0.19) !important;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   استجابة بطاقات القرارات
+   ========================================================= */
+
+
+/* الشاشات الكبيرة والمتوسطة
+   نخليها 3 بطاقات */
+
+@media (min-width: 1101px) {
+
+    .decisions-grid {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr)) !important;
+
+        gap: 14px !important;
+    }
+
+}
+
+
+/* التابلت واللابتوب الصغير
+   بطاقتان */
+
+@media
+(max-width: 1100px)
+and
+(min-width: 701px) {
+
+    .decisions-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+
+        gap: 12px !important;
+    }
+
+    .decision-card {
+        min-height: 0 !important;
+        padding: 13px !important;
+    }
+
+    .decision-card-header {
+        gap: 8px !important;
+    }
+
+    .decision-card-header h3 {
+        font-size: 12px !important;
+    }
+
+    .decision-rate {
+        width: 60px !important;
+        min-width: 60px !important;
+        height: 52px !important;
+
+        padding: 0 !important;
+
+        font-size: 14px !important;
+    }
+
+    .decision-info {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+
+        gap: 7px !important;
+    }
+
+    .decision-info-item {
+        min-height: 55px !important;
+        padding: 8px !important;
+    }
+}
+
+
+/* الجوال
+   بطاقة واحدة */
+
+@media (max-width: 700px) {
+
+    .decisions-grid {
+        grid-template-columns:
+            1fr !important;
+
+        gap: 11px !important;
+    }
+
+    .decision-card {
+        width: 100% !important;
+
+        min-height: 0 !important;
+
+        padding: 13px !important;
+
+        border-radius: 12px !important;
+    }
+
+    .decision-card-header {
+        gap: 8px !important;
+    }
+
+    .decision-card-header h3 {
+        font-size: 12px !important;
+    }
+
+    .decision-rate {
+        width: 60px !important;
+        min-width: 60px !important;
+        height: 52px !important;
+
+        padding: 0 !important;
+
+        font-size: 14px !important;
+    }
+
+    .decision-info {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+
+        gap: 7px !important;
+    }
+
+    .decision-info-item {
+        min-height: 55px !important;
+        padding: 8px !important;
+    }
+
+    .decision-actions {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+
+/* الجوال الصغير */
+
+@media (max-width: 430px) {
+
+    .decision-card {
+        padding: 11px !important;
+    }
+
+    .decision-card-header h3 {
+        font-size: 12px !important;
+    }
+
+    .decision-rate {
+        width: 56px !important;
+        min-width: 56px !important;
+        height: 48px !important;
+
+        padding: 0 !important;
+
+        font-size: 14px !important;
+    }
+
+    .decision-info {
+        grid-template-columns:
+            1fr !important;
+    }
+
+    .decision-info-item {
+        min-height: 52px !important;
+    }
+
+    .decision-reason {
+        min-height: 52px !important;
+    }
+
+    .decision-actions {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .decision-actions button {
+        height: 34px !important;
+    }
+}
+/* =====================================================
+   الحالة الفارغة
+===================================================== */
+
+.empty-state {
+    grid-column:
+        1 / -1 !important;
+
+    width: 100%;
+
+    min-height: 250px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    text-align: center;
+
+    color: #87959c;
+
+    font-size: 10px;
+}
+
+.error-state strong {
+    color: #985454;
+}
+
+.error-state small {
+    color: #8d7171;
+
+    font-size: 8px;
+}
+
+
+/* =====================================================
+   Modal
+===================================================== */
+
+.modal {
+    display: none;
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 7000;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+
+.modal.show {
+    display: flex;
+}
+
+.modal-overlay {
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        rgba(
+            37,
+            56,
+            66,
+            0.40
+        );
+
+    backdrop-filter:
+        blur(5px);
+}
+
+.modal-box {
+    position: relative;
+
+    z-index: 2;
+
+    width:
+        min(
+            700px,
+            100%
+        );
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border-radius: 18px;
+
+    border-top:
+        3px solid
+        #c49a5c;
+
+    background:
+        rgba(
+            248,
+            246,
+            241,
+            0.99
+        );
+
+    box-shadow:
+        0 22px 55px
+        rgba(
+            38,
+            57,
+            68,
+            0.18
+        );
+}
+
+.details-box {
+    width:
+        min(
+            650px,
+            100%
+        );
+}
+
+
+/* =====================================================
+   رأس النافذة
+===================================================== */
+
+.modal-header {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 15px;
+
+    margin-bottom: 22px;
+
+    padding-bottom: 13px;
+
+    border-bottom:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.08
+        );
+}
+
+.modal-header h2 {
+    margin-bottom: 4px;
+
+    color: #2f5367;
+
+    font-size: 19px;
+}
+
+.modal-header p {
+    color: #7c8c94;
+
+    font-size: 9px;
+
+    line-height: 1.7;
+}
+
+.close-btn {
+    width: 34px;
+    height: 34px;
+
+    flex:
+        0 0 34px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.07
+        );
+
+    color: #3b5b6c;
+
+    font-size: 20px;
+}
+
+.close-btn:hover {
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.13
+        );
+}
+
+
+/* =====================================================
+   الفورم
+===================================================== */
+
+.form-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 15px;
+}
+
+.form-group {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.full-width {
+    grid-column:
+        1 / -1;
+}
+
+.form-group label {
+    color: #526c79;
+
+    font-size: 9px;
+    font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+
+    border:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.16
+        );
+
+    border-radius: 10px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.80
+        );
+
+    color: #3d5968;
+
+    font-size: 10px;
+
+    outline: none;
+}
+
+.form-group input,
+.form-group select {
+    height: 45px;
+
+    padding:
+        0
+        12px;
+}
+
+.form-group textarea {
+    min-height: 110px;
+
+    padding: 12px;
+
+    resize: vertical;
+
+    line-height: 1.7;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: #c49a5c;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            196,
+            154,
+            92,
+            0.08
+        );
+}
+
+.form-group input:disabled,
+.form-group select:disabled {
+    opacity: 0.75;
+
+    background:
+        rgba(
+            239,
+            239,
+            234,
+            0.75
+        );
+}
+
+.form-group small {
+    color: #89969d;
+
+    font-size: 8px;
+
+    line-height: 1.6;
+}
+
+
+/* =====================================================
+   حالة القرار
+===================================================== */
+
+#decisionStatus {
+    margin-top: 14px;
+
+    padding:
+        11px
+        14px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.06
+        );
+
+    color: #526d7b;
+
+    font-size: 9px;
+
+    line-height: 1.7;
+}
+
+#decisionStatus:empty {
+    display: none;
+}
+
+
+/* =====================================================
+   تحذير الإجازة
+===================================================== */
+
+.leave-warning {
+    margin-top: 12px;
+
+    padding:
+        13px
+        15px;
+
+    border-radius: 10px;
+
+    border-right:
+        3px solid
+        #9a5d5d;
+
+    background:
+        rgba(
+            151,
+            77,
+            77,
+            0.08
+        );
+
+    color: #846868;
+
+    font-size: 9px;
+
+    line-height: 1.8;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+/* =====================================================
+   أزرار النافذة
+===================================================== */
+
+.modal-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    margin-top: 22px;
+
+    padding-top: 14px;
+
+    border-top:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.08
+        );
+}
+
+.modal-actions button {
+    min-width: 110px;
+    height: 43px;
+
+    border-radius: 9px;
+
+    font-size: 9px;
+}
+
+.secondary-btn,
+.cancel-btn {
+    border:
+        1px solid
+        rgba(
+            49,
+            88,
+            108,
+            0.18
+        );
+
+    background: transparent;
+
+    color: #526d7b;
+}
+
+.secondary-btn:hover,
+.cancel-btn:hover {
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.06
+        );
+}
+
+.primary-btn,
+.save-btn {
+    border: none;
+
+    background: #31586c;
+
+    color: #ffffff;
+}
+
+.primary-btn:hover,
+.save-btn:hover {
+    background: #27495b;
+}
+
+.primary-btn:disabled,
+.save-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+/* =====================================================
+   تفاصيل القرار
+===================================================== */
+
+.details-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 13px;
+}
+
+.detail-item {
+    min-width: 0;
+
+    padding: 15px;
+
+    border-radius: 11px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.55
+        );
+
+    border:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.09
+        );
+}
+
+.detail-item span {
+    display: block;
+
+    margin-bottom: 6px;
+
+    color: #839098;
+
+    font-size: 8px;
+}
+
+.detail-item strong {
+    display: block;
+
+    color: #405e6e;
+
+    font-size: 10px;
+
+    line-height: 1.7;
+
+    overflow-wrap: anywhere;
+}
+
+.detail-item.full-detail,
+.full-detail {
+    grid-column:
+        1 / -1;
+}
+
+
+/* =====================================================
+   توافق مع أسماء كلاسات إضافية
+===================================================== */
+
+.decision-top {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: space-between;
+    align-items: flex-start;
+
+    gap: 12px;
+
+    margin-bottom: 11px;
+}
+
+.match-badge {
+    min-width: 85px;
+
+    padding: 9px;
+
+    text-align: center;
+
+    border-radius: 10px;
+
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.12
+        );
+}
+
+.info-item {
+    min-width: 0;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(
+            239,
+            239,
+            234,
+            0.65
+        );
+}
+
+.reason-preview {
+    min-height: 70px;
+
+    padding: 11px;
+
+    margin-bottom: 13px;
+
+    border-radius: 9px;
+
+    border-right:
+        3px solid
+        #c49a5c;
+
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.06
+        );
+}
+
+
+/* =====================================================
+   شريط التمرير
+===================================================== */
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.04
+        );
+}
+
+::-webkit-scrollbar-thumb {
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.25
+        );
+
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.40
+        );
+}
+
+
+/* =====================================================
+   التابلت
+===================================================== */
+
+@media
+(max-width: 1100px)
+and
+(min-width: 701px) {
+
+    .main-content {
+        padding:
+            30px
+            25px
+            45px;
+    }
+
+    .decisions-summary {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+   .decisions-grid {
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr)) !important;
+
+    gap: 12px !important;
+}
+
+.decision-card {
+    min-height: 0 !important;
+    padding: 13px !important;
+}
+}
+
+/* =====================================================
+   الجوال
+===================================================== */
+
+@media
+(max-width: 700px) {
+
+    body {
+        padding-top: 76px;
+    }
+
+
+    /* الصفحة */
+
+    .decisions-page {
+        display: block;
+    }
+
+
+    /* رأس الجوال */
+
+    .mobile-header {
+        width: 100%;
+        height: 76px;
+
+        position: fixed;
+
+        top: 0;
+        right: 0;
+        left: 0;
+
+        z-index: 3000;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+
+        padding:
+            10px
+            14px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #5f7c8b 0%,
+                #3c6276 48%,
+                #274f65 100%
+            );
+
+        box-shadow:
+            0 4px 17px
+            rgba(
+                40,
+                61,
+                73,
+                0.10
+            );
+    }
+
+    .mobile-menu-btn {
+        width: 46px;
+        height: 46px;
+
+        flex:
+            0 0 46px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border:
+            1px solid
+            rgba(
+                255,
+                255,
+                255,
+                0.50
+            );
+
+        border-radius: 14px;
+
+        background:
+            rgba(
+                249,
+                247,
+                242,
+                0.97
+            );
+
+        color: #31586c;
+
+        font-size: 22px;
+    }
+
+    .mobile-header-title {
+        flex: 1;
+    }
+
+    .mobile-header-title h2 {
+        color: #ffffff;
+
+        font-size: 18px;
+    }
+
+    .mobile-header-title span {
+        display: block;
+
+        color:
+            rgba(
+                255,
+                255,
+                255,
+                0.65
+            );
+
+        font-size: 9px;
+    }
+
+    .mobile-logo {
+        width: 55px;
+        height: auto;
+
+        object-fit: contain;
+    }
+
+
+    /* خلفية السايدبار */
+
+    .sidebar-overlay {
+        display: block;
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 3900;
+
+        background:
+            rgba(
+                25,
+                39,
+                47,
+                0.45
+            );
+
+        opacity: 0;
+
+        visibility: hidden;
+
+        transition: 0.25s ease;
+    }
+
+    .sidebar-overlay.show {
+        opacity: 1;
+
+        visibility: visible;
+    }
+
+
+    /* القائمة */
+
+    .sidebar {
+        width: 250px;
+        height: 100vh;
+
+        position: fixed;
+
+        top: 0;
+        right: -270px;
+
+        z-index: 4000;
+
+        padding:
+            24px
+            16px;
+
+        transition:
+            right 0.25s ease;
+    }
+
+    .sidebar.show {
+        right: 0;
+    }
+
+
+    /* المحتوى */
+
+    .main-content {
+        width: 100%;
+
+        min-height:
+            calc(
+                100vh - 76px
+            );
+
+        margin-right: 0;
+
+        padding:
+            22px
+            14px
+            35px;
+
+        background-attachment:
+            scroll;
+    }
+
+
+    /* رأس الصفحة */
+
+    .topbar {
+        margin-bottom: 18px;
+    }
+
+    .topbar h1 {
+        font-size: 23px;
+    }
+
+    .topbar p {
+        font-size: 10px;
+    }
+
+
+    /* الملخص */
+
+    .decisions-summary {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+        gap: 10px;
+    }
+
+    .summary-item {
+        min-height: 88px;
+
+        padding: 13px;
+    }
+
+    .summary-item strong {
+        font-size: 21px;
+    }
+
+
+    /* البحث */
+
+    .toolbar {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        padding: 11px;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .add-btn {
+        width: 100%;
+        min-width: 0;
+    }
+
+
+    /* حاوية القرارات */
+
+    .decisions-container {
+        padding: 15px;
+    }
+
+    .section-title {
+        align-items: flex-start;
+    }
+
+
+    /* بطاقة واحدة */
+
+    .decisions-grid {
+        grid-template-columns:
+            1fr !important;
+
+        gap: 14px !important;
+    }
+
+    .decision-card {
+        min-height: auto;
+
+        padding: 16px !important;
+    }
+
+    .decision-card-header h3 {
+        font-size: 16px !important;
+    }
+
+    .decision-rate {
+        min-width: 67px !important;
+
+        padding:
+            9px
+            10px !important;
+
+        font-size: 17px !important;
+    }
+
+
+    /* الأربع معلومات */
+
+    .decision-info {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            ) !important;
+
+        gap: 8px !important;
+    }
+
+    .decision-info-item {
+        min-height: 72px !important;
+
+        padding:
+            10px !important;
+    }
+
+    .decision-info-item strong {
+        font-size: 10px !important;
+    }
+
+
+    /* النافذة */
+
+    .modal {
+        padding: 10px;
+    }
+
+    .modal-box {
+        width: 100%;
+
+        max-height:
+            calc(
+                100vh - 20px
+            );
+
+        padding: 18px;
+
+        border-radius: 15px;
+    }
+
+    .form-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .full-width {
+        grid-column: auto;
+    }
+
+    .details-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .detail-item.full-detail,
+    .full-detail {
+        grid-column: auto;
+    }
+
+    .modal-actions {
+        display: grid;
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+    }
+
+    .modal-actions button {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+
+/* =====================================================
+   الجوال الصغير
+===================================================== */
+
+@media
+(max-width: 430px) {
+
+    .main-content {
+        padding:
+            18px
+            10px
+            30px;
+    }
+
+    .mobile-header {
+        padding:
+            10px;
+    }
+
+    .mobile-logo {
+        width: 48px;
+    }
+
+    .topbar h1 {
+        font-size: 21px;
+    }
+
+    .decisions-summary {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            );
+
+        gap: 8px;
+    }
+
+    .summary-item {
+        min-height: 82px;
+
+        padding: 11px;
+    }
+
+    .summary-item span {
+        font-size: 8px;
+    }
+
+    .summary-item strong {
+        font-size: 19px;
+    }
+
+    .decisions-container {
+        padding: 11px;
+    }
+
+    .decision-card {
+        padding: 13px !important;
+    }
+
+    .decision-card-header {
+        gap: 9px !important;
+    }
+
+    .decision-card-header h3 {
+        font-size: 14px !important;
+    }
+
+    .decision-rate {
+        min-width: 60px !important;
+
+        padding:
+            8px !important;
+
+        font-size: 15px !important;
+    }
+
+    .decision-info {
+        grid-template-columns:
+            1fr !important;
+    }
+
+    .decision-info-item {
+        min-height: 62px !important;
+    }
+
+    .decision-reason {
+        min-height: 75px !important;
+    }
+
+    .decision-actions {
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(
+                    0,
+                    1fr
+                )
+            ) !important;
+    }
+}
