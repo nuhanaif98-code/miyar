@@ -1,0 +1,1465 @@
+/* =====================================================
+   معيار | التقارير
+===================================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+    font-family:
+        "Segoe UI",
+        Tahoma,
+        Arial,
+        sans-serif;
+
+    color: #263f4f;
+
+    background: #f5f2ec;
+
+    overflow-x: hidden;
+}
+
+
+body.menu-open {
+    overflow: hidden;
+}
+
+
+button,
+select {
+    font-family: inherit;
+}
+
+
+
+/* =====================================================
+   الصفحة
+===================================================== */
+
+.reports-page {
+    width: 100%;
+    min-height: 100vh;
+
+    display: flex;
+}
+
+
+
+/* =====================================================
+   عناصر الجوال
+===================================================== */
+
+.mobile-header,
+.mobile-menu-btn,
+.sidebar-overlay {
+    display: none;
+}
+
+
+
+/* =====================================================
+   Sidebar
+===================================================== */
+
+.sidebar {
+    width: 245px;
+    height: 100vh;
+
+    position: fixed;
+
+    top: 0;
+    right: 0;
+
+    z-index: 1000;
+
+    padding:
+        25px
+        17px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    overflow-y: auto;
+
+    background:
+        linear-gradient(
+            180deg,
+            #31586c 0%,
+            #3c667a 52%,
+            #456f82 100%
+        );
+
+    box-shadow:
+        -8px 0 28px
+        rgba(
+            38,
+            59,
+            70,
+            0.10
+        );
+}
+
+
+.sidebar-logo {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+
+.sidebar-logo img {
+    width: 92px;
+
+    height: auto;
+
+    object-fit: contain;
+}
+
+
+.sidebar-nav {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+
+.nav-link {
+    width: 100%;
+
+    min-height: 44px;
+
+    display: flex;
+
+    align-items: center;
+
+    padding:
+        0
+        14px;
+
+    border-radius: 10px;
+
+    border-right:
+        3px solid
+        transparent;
+
+    color:
+        rgba(
+            255,
+            255,
+            255,
+            0.78
+        );
+
+    text-decoration: none;
+
+    font-size: 12px;
+
+    transition:
+        0.2s ease;
+}
+
+
+.nav-link:hover {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.09
+        );
+
+    color: white;
+}
+
+
+.nav-link.active {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.14
+        );
+
+    color: white;
+
+    font-weight: 700;
+
+    border-right-color:
+        #c69a5a;
+}
+
+
+.logout-btn {
+    width: 100%;
+
+    min-height: 44px;
+
+    margin-top: auto;
+
+    border-radius: 10px;
+
+    border:
+        1px solid
+        rgba(
+            255,
+            255,
+            255,
+            0.24
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.05
+        );
+
+    color: white;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+
+.logout-btn:hover {
+    background: #b98a4d;
+
+    border-color: #b98a4d;
+}
+
+
+
+/* =====================================================
+   المحتوى
+===================================================== */
+
+.main-content {
+    width:
+        calc(
+            100% - 245px
+        );
+
+    min-height: 100vh;
+
+    margin-right: 245px;
+
+    padding:
+        35px
+        42px
+        50px;
+
+    background-color:
+        #f5f2ec;
+
+    background-image:
+        linear-gradient(
+            rgba(
+                249,
+                247,
+                242,
+                0.10
+            ),
+            rgba(
+                249,
+                247,
+                242,
+                0.10
+            )
+        ),
+        url("assets/background.jpeg");
+
+    background-size: cover;
+
+    background-position: center;
+
+    background-repeat: no-repeat;
+
+    background-attachment: fixed;
+}
+
+
+
+/* =====================================================
+   رأس الصفحة
+===================================================== */
+
+.topbar {
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items:
+        flex-end;
+
+    gap: 20px;
+
+    margin-bottom: 24px;
+}
+
+
+.page-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    min-height: 28px;
+
+    padding:
+        0
+        14px;
+
+    margin-bottom: 9px;
+
+    border-radius: 30px;
+
+    border:
+        1px solid
+        rgba(
+            185,
+            138,
+            77,
+            0.30
+        );
+
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.13
+        );
+
+    color: #9f733c;
+
+    font-size: 9px;
+}
+
+
+.topbar h1 {
+    margin-bottom: 6px;
+
+    color: #274d62;
+
+    font-size: 28px;
+}
+
+
+.topbar p {
+    max-width: 800px;
+
+    color: #778a95;
+
+    font-size: 11px;
+
+    line-height: 1.8;
+}
+
+
+.print-btn {
+    min-width: 135px;
+
+    height: 43px;
+
+    padding:
+        0
+        17px;
+
+    border:
+        1px solid
+        rgba(
+            196,
+            154,
+            92,
+            0.55
+        );
+
+    border-radius: 9px;
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.85
+        );
+
+    color: #9b713e;
+
+    font-size: 9px;
+
+    cursor: pointer;
+}
+
+
+.print-btn:hover {
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.13
+        );
+}
+
+
+
+/* =====================================================
+   أدوات التقرير
+===================================================== */
+
+.report-tools {
+    display: flex;
+
+    align-items:
+        flex-end;
+
+    gap: 12px;
+
+    flex-wrap: wrap;
+
+    padding: 15px;
+
+    margin-bottom: 20px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.12
+        );
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.80
+        );
+
+    backdrop-filter:
+        blur(6px);
+}
+
+
+.filter-group {
+    min-width: 190px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 6px;
+}
+
+
+.filter-group label {
+    color: #58717d;
+
+    font-size: 9px;
+
+    font-weight: 600;
+}
+
+
+.filter-group select {
+    width: 100%;
+
+    height: 43px;
+
+    padding:
+        0
+        11px;
+
+    border-radius: 9px;
+
+    border:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.14
+        );
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.75
+        );
+
+    color: #506a78;
+
+    font-size: 10px;
+
+    outline: none;
+}
+
+
+.filter-group select:focus {
+    border-color: #c49a5c;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(
+            196,
+            154,
+            92,
+            0.08
+        );
+}
+
+
+.refresh-btn {
+    height: 43px;
+
+    padding:
+        0
+        18px;
+
+    border: none;
+
+    border-radius: 9px;
+
+    background: #31586c;
+
+    color: white;
+
+    font-size: 9px;
+
+    cursor: pointer;
+}
+
+
+.refresh-btn:hover {
+    background: #27495b;
+}
+
+
+.refresh-btn:disabled {
+    opacity: 0.6;
+
+    cursor: not-allowed;
+}
+
+
+
+/* =====================================================
+   الملخص
+===================================================== */
+
+.summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            4,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 14px;
+
+    margin-bottom: 20px;
+}
+
+
+.summary-card {
+    min-width: 0;
+
+    min-height: 110px;
+
+    padding: 17px;
+
+    border-radius: 15px;
+
+    border:
+        1.5px solid
+        #c69a5a;
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.80
+        );
+
+    backdrop-filter:
+        blur(5px);
+
+    box-shadow:
+        0 7px 20px
+        rgba(
+            38,
+            59,
+            70,
+            0.04
+        );
+
+    transition:
+        0.2s ease;
+}
+
+
+.summary-card:hover {
+    transform:
+        translateY(-2px);
+}
+
+
+.card-title {
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #71848e;
+
+    font-size: 9px;
+}
+
+
+.summary-card strong {
+    display: block;
+
+    margin-bottom: 7px;
+
+    color: #31576b;
+
+    font-size: 23px;
+}
+
+
+.summary-card p {
+    color: #8b989e;
+
+    font-size: 8px;
+
+    line-height: 1.7;
+}
+
+
+
+/* =====================================================
+   شبكة التقارير
+===================================================== */
+
+.reports-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            2,
+            minmax(
+                0,
+                1fr
+            )
+        );
+
+    gap: 15px;
+}
+
+
+.report-card {
+    min-width: 0;
+
+    min-height: 280px;
+
+    padding: 18px;
+
+    border-radius: 15px;
+
+    border:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.12
+        );
+
+    border-top:
+        3px solid
+        #c49a5c;
+
+    background:
+        rgba(
+            249,
+            247,
+            242,
+            0.80
+        );
+
+    backdrop-filter:
+        blur(7px);
+
+    box-shadow:
+        0 8px 22px
+        rgba(
+            38,
+            59,
+            70,
+            0.05
+        );
+}
+
+
+.report-card-header {
+    display: flex;
+
+    align-items:
+        flex-start;
+
+    gap: 10px;
+
+    padding-bottom: 13px;
+
+    margin-bottom: 12px;
+
+    border-bottom:
+        1px solid
+        rgba(
+            60,
+            85,
+            98,
+            0.08
+        );
+}
+
+
+.report-number {
+    min-width: 30px;
+
+    min-height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.12
+        );
+
+    color: #b28750;
+
+    font-size: 8px;
+}
+
+
+.report-card-header h2 {
+    margin-bottom: 4px;
+
+    color: #31576b;
+
+    font-size: 14px;
+}
+
+
+.report-card-header p {
+    color: #8a989f;
+
+    font-size: 8px;
+
+    line-height: 1.5;
+}
+
+
+
+/* =====================================================
+   محتوى التقرير
+===================================================== */
+
+.report-content {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 8px;
+
+    max-height: 350px;
+
+    overflow-y: auto;
+
+    padding-left: 2px;
+}
+
+
+.report-row {
+    min-height: 55px;
+
+    padding:
+        10px
+        11px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content:
+        space-between;
+
+    gap: 12px;
+
+    border-radius: 9px;
+
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.52
+        );
+
+    transition:
+        0.2s ease;
+}
+
+
+.report-row:hover {
+    background:
+        rgba(
+            255,
+            255,
+            255,
+            0.78
+        );
+
+    transform:
+        translateY(-1px);
+}
+
+
+.report-row div {
+    min-width: 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 3px;
+}
+
+
+.report-row strong {
+    color: #496674;
+
+    font-size: 9px;
+
+    line-height: 1.5;
+
+    overflow-wrap: anywhere;
+}
+
+
+.report-row div > span {
+    color: #84939a;
+
+    font-size: 8px;
+
+    line-height: 1.5;
+}
+
+
+
+/* =====================================================
+   الشارات
+===================================================== */
+
+.status-badge,
+.value-badge,
+.match-badge,
+.leave-badge {
+    flex-shrink: 0;
+
+    padding:
+        5px
+        10px;
+
+    border-radius: 20px;
+
+    font-size:
+        8px !important;
+}
+
+
+.status-badge {
+    background:
+        rgba(
+            49,
+            88,
+            108,
+            0.09
+        );
+
+    color:
+        #31586c !important;
+}
+
+
+.value-badge {
+    background:
+        rgba(
+            196,
+            154,
+            92,
+            0.12
+        );
+
+    color:
+        #a27640 !important;
+}
+
+
+.match-badge {
+    background:
+        rgba(
+            70,
+            126,
+            97,
+            0.11
+        );
+
+    color:
+        #497e65 !important;
+
+    font-weight: 700;
+}
+
+
+.leave-badge {
+    background:
+        rgba(
+            96,
+            115,
+            139,
+            0.10
+        );
+
+    color:
+        #5c7080 !important;
+}
+
+
+
+/* =====================================================
+   فارغ
+===================================================== */
+
+.empty-report {
+    min-height: 175px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    color: #8a979d;
+
+    font-size: 9px;
+
+    line-height: 1.8;
+}
+
+
+
+/* =====================================================
+   Tablet
+===================================================== */
+
+@media
+(max-width: 1050px)
+and
+(min-width: 701px) {
+
+
+    .main-content {
+        padding:
+            30px
+            25px
+            45px;
+    }
+
+
+    .summary-grid {
+        grid-template-columns:
+            repeat(
+                2,
+                1fr
+            );
+    }
+
+
+    .reports-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+
+
+/* =====================================================
+   الجوال
+===================================================== */
+
+@media (max-width: 700px) {
+
+
+    .reports-page {
+        display: block;
+    }
+
+
+    .mobile-header {
+        width: 100%;
+
+        height: 76px;
+
+        position: fixed;
+
+        top: 0;
+        right: 0;
+        left: 0;
+
+        z-index: 3000;
+
+        display: flex;
+
+        align-items: center;
+
+        gap: 11px;
+
+        padding:
+            10px
+            14px;
+
+        background:
+            linear-gradient(
+                90deg,
+                #5f7c8b 0%,
+                #3c6276 48%,
+                #274f65 100%
+            );
+
+        box-shadow:
+            0 4px 17px
+            rgba(
+                40,
+                61,
+                73,
+                0.10
+            );
+    }
+
+
+    .mobile-menu-btn {
+        width: 46px;
+
+        height: 46px;
+
+        flex:
+            0 0 46px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border:
+            1px solid
+            rgba(
+                255,
+                255,
+                255,
+                0.50
+            );
+
+        border-radius: 14px;
+
+        background:
+            rgba(
+                249,
+                247,
+                242,
+                0.97
+            );
+
+        color: #31586c;
+
+        font-size: 22px;
+
+        cursor: pointer;
+    }
+
+
+    .mobile-header-title h2 {
+        color: white;
+
+        font-size: 18px;
+    }
+
+
+    .mobile-header-title span {
+        display: block;
+
+        color:
+            rgba(
+                255,
+                255,
+                255,
+                0.65
+            );
+
+        font-size: 9px;
+    }
+
+
+    .mobile-logo {
+        width: 54px;
+
+        height: 54px;
+
+        object-fit: contain;
+
+        margin-right: auto;
+    }
+
+
+    .sidebar {
+        width: 275px;
+
+        max-width: 83vw;
+
+        height: 100dvh;
+
+        right: -300px;
+
+        z-index: 5000;
+
+        transition:
+            right
+            0.30s
+            ease;
+    }
+
+
+    .sidebar.show {
+        right: 0;
+    }
+
+
+    .sidebar-overlay {
+        display: block;
+
+        position: fixed;
+
+        inset: 0;
+
+        z-index: 4000;
+
+        background:
+            rgba(
+                22,
+                36,
+                44,
+                0.42
+            );
+
+        opacity: 0;
+
+        visibility: hidden;
+
+        pointer-events: none;
+    }
+
+
+    .sidebar-overlay.show {
+        opacity: 1;
+
+        visibility: visible;
+
+        pointer-events: auto;
+    }
+
+
+    .main-content {
+        width: 100%;
+
+        margin-right: 0;
+
+        padding:
+            102px
+            14px
+            40px;
+
+        background-attachment:
+            scroll;
+    }
+
+
+    .topbar {
+        display: block;
+    }
+
+
+    .topbar h1 {
+        font-size: 24px;
+    }
+
+
+    .print-btn {
+        width: 100%;
+
+        height: 47px;
+
+        margin-top: 14px;
+    }
+
+
+    .report-tools {
+        width: 100%;
+
+        display: flex;
+
+        flex-direction: column;
+
+        align-items:
+            stretch;
+
+        gap: 10px;
+
+        padding: 14px;
+    }
+
+
+    .filter-group {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+
+    .filter-group select,
+    .refresh-btn {
+        width: 100%;
+
+        height: 48px;
+    }
+
+
+    .summary-grid {
+        grid-template-columns:
+            1fr
+            1fr;
+
+        gap: 8px;
+    }
+
+
+    .summary-card {
+        min-height: 95px;
+
+        padding: 13px;
+    }
+
+
+    .summary-card strong {
+        font-size: 20px;
+    }
+
+
+    .reports-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .report-card {
+        min-height: 230px;
+
+        padding: 16px;
+    }
+
+
+    .report-content {
+        max-height: none;
+    }
+
+}
+
+
+
+/* =====================================================
+   الجوال الصغير
+===================================================== */
+
+@media (max-width: 430px) {
+
+
+    .mobile-header {
+        height: 70px;
+
+        padding:
+            8px
+            12px;
+    }
+
+
+    .mobile-menu-btn {
+        width: 43px;
+
+        height: 43px;
+
+        flex-basis: 43px;
+
+        font-size: 20px;
+    }
+
+
+    .mobile-header-title h2 {
+        font-size: 16px;
+    }
+
+
+    .mobile-logo {
+        width: 49px;
+
+        height: 49px;
+    }
+
+
+    .main-content {
+        padding:
+            92px
+            11px
+            35px;
+    }
+
+
+    .summary-grid {
+        grid-template-columns:
+            1fr
+            1fr;
+    }
+
+
+    .report-row {
+        align-items:
+            flex-start;
+    }
+
+}
+
+
+
+/* =====================================================
+   الطباعة / PDF
+===================================================== */
+
+@media print {
+
+
+    body {
+        background: white;
+    }
+
+
+    .sidebar,
+    .mobile-header,
+    .sidebar-overlay,
+    .report-tools,
+    .print-btn {
+        display: none !important;
+    }
+
+
+    .main-content {
+        width: 100%;
+
+        margin: 0;
+
+        padding: 20px;
+
+        background: white;
+    }
+
+
+    .topbar {
+        margin-bottom: 20px;
+    }
+
+
+    .summary-grid {
+        grid-template-columns:
+            repeat(
+                4,
+                1fr
+            );
+    }
+
+
+    .reports-grid {
+        grid-template-columns:
+            1fr
+            1fr;
+    }
+
+
+    .summary-card,
+    .report-card {
+        box-shadow: none;
+
+        break-inside: avoid;
+
+        background: white;
+    }
+
+
+    .report-content {
+        max-height: none;
+
+        overflow: visible;
+    }
+
+}
