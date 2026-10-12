@@ -1,0 +1,2855 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>معيار | طلبات الإجازات</title>
+<link rel="stylesheet" href="leaves.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<div class="leaves-page">
+
+<header class="mobile-header">
+<button type="button" class="mobile-menu-btn" id="mobileMenuBtn" aria-label="فتح القائمة">☰</button>
+
+<div class="mobile-header-title">
+<h2>طلبات الإجازات</h2>
+<span>معيار</span>
+</div>
+
+<img src="assets/logo.png" alt="معيار" class="mobile-logo">
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+
+<div class="sidebar-logo">
+<img src="assets/logo.png" alt="معيار">
+</div>
+
+<nav class="sidebar-nav">
+
+<a href="dashboard.html" class="nav-link">
+لوحة التحكم
+</a>
+
+<a href="employees.html" class="nav-link">
+الموظفون
+</a>
+
+<a href="projects.html" class="nav-link">
+المشاريع
+</a>
+
+<a href="tasks.html" class="nav-link">
+المهام
+</a>
+
+<a href="matching.html" class="nav-link">
+المطابقة والترشيح
+</a>
+
+<a href="evaluations.html" class="nav-link">
+التقييمات
+</a>
+
+<a href="decisions.html" class="nav-link">
+القرارات
+</a>
+
+<a href="leaves.html" class="nav-link active">
+طلبات الإجازات
+</a>
+
+<a href="reports.html" class="nav-link">
+التقارير
+</a>
+
+</nav>
+
+<button type="button" class="logout-btn" id="logoutBtn">
+تسجيل الخروج
+</button>
+
+</aside>
+
+<main class="main-content">
+
+<header class="topbar">
+
+<span class="page-badge">
+إدارة الإجازات
+</span>
+
+<h1>
+طلبات الإجازات
+</h1>
+
+<p>
+مراجعة طلبات الموظفين واعتمادها أو رفضها ومتابعة الإجازات الحالية والقادمة.
+</p>
+
+</header>
+
+<section class="summary-grid">
+
+<div class="summary-card">
+<span>إجمالي الطلبات</span>
+<strong id="summaryTotal">0</strong>
+</div>
+
+<div class="summary-card pending-card">
+<span>قيد المراجعة</span>
+<strong id="summaryPending">0</strong>
+</div>
+
+<div class="summary-card approved-card">
+<span>الطلبات المعتمدة</span>
+<strong id="summaryApproved">0</strong>
+</div>
+
+<div class="summary-card rejected-card">
+<span>الطلبات المرفوضة</span>
+<strong id="summaryRejected">0</strong>
+</div>
+
+<div class="summary-card current-card">
+<span>في إجازة حالياً</span>
+<strong id="summaryCurrent">0</strong>
+</div>
+
+</section>
+
+<section class="toolbar">
+
+<div class="search-box">
+<input
+type="text"
+id="searchInput"
+placeholder="ابحث باسم الموظف أو الرقم الوظيفي أو البريد..."
+>
+</div>
+
+<div class="filters">
+
+<select id="statusFilter">
+<option value="">جميع الحالات</option>
+<option value="قيد المراجعة">قيد المراجعة</option>
+<option value="معتمدة">معتمدة</option>
+<option value="مرفوضة">مرفوضة</option>
+</select>
+
+<select id="leaveTypeFilter">
+<option value="">جميع أنواع الإجازات</option>
+<option value="إجازة سنوية">إجازة سنوية</option>
+<option value="إجازة مرضية">إجازة مرضية</option>
+<option value="إجازة اضطرارية">إجازة اضطرارية</option>
+<option value="إجازة بدون راتب">إجازة بدون راتب</option>
+<option value="أخرى">أخرى</option>
+</select>
+
+</div>
+
+</section>
+
+<section class="requests-card">
+
+<div class="section-header">
+
+<div>
+<h2>طلبات الموظفين</h2>
+<p id="requestsCount">-</p>
+</div>
+
+</div>
+
+<div class="requests-list" id="requestsList">
+
+<div class="loading-state">
+جارٍ تحميل طلبات الإجازة...
+</div>
+
+</div>
+
+</section>
+
+</main>
+
+</div>
+
+
+<div class="modal" id="decisionModal">
+
+<div class="modal-overlay" id="decisionModalOverlay"></div>
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<div>
+<h2>مراجعة طلب الإجازة</h2>
+<p>
+راجع بيانات الموظف والطلب قبل اعتماد القرار.
+</p>
+</div>
+
+<button
+type="button"
+class="close-btn"
+id="closeDecisionModalBtn"
+aria-label="إغلاق"
+>
+×
+</button>
+
+</div>
+
+<div
+class="decision-request-info"
+id="decisionRequestInfo"
+></div>
+
+<div
+id="taskConflictBox"
+style="display:none; margin-bottom:18px;"
+></div>
+
+<div class="form-group">
+
+<label for="decisionNote">
+ملاحظة المسؤول
+</label>
+
+<textarea
+id="decisionNote"
+rows="4"
+maxlength="500"
+placeholder="في حالة الرفض يجب كتابة سبب الرفض..."
+></textarea>
+
+<small class="form-hint">
+سبب الرفض إلزامي، أما عند الاعتماد فالملاحظة اختيارية.
+</small>
+
+</div>
+
+<div
+class="form-error"
+id="decisionError"
+></div>
+
+<div class="decision-actions">
+
+<button
+type="button"
+class="cancel-btn"
+id="cancelDecisionBtn"
+>
+رجوع
+</button>
+
+<button
+type="button"
+class="reject-btn"
+id="rejectLeaveBtn"
+>
+رفض الطلب
+</button>
+
+<button
+type="button"
+class="approve-btn"
+id="approveLeaveBtn"
+>
+اعتماد الطلب
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const SUPABASE_URL =
+"https://avooyglxacytrfhvotsl.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_NVlWEnA_w4KbSse_-70zdA_J9ut0Kyo";
+
+const ADMIN_EMAILS = [
+    "miyar.admin@gmail.com",
+    "miyar.hr@gmail.com"
+];
+
+const supabaseClient =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
+
+
+let leaveRequests = [];
+
+let employees = [];
+
+let tasks = [];
+
+let taskAssignments = [];
+
+let selectedRequest = null;
+
+let selectedRequestConflicts = [];
+
+
+const requestsList =
+document.getElementById(
+"requestsList"
+);
+
+const requestsCount =
+document.getElementById(
+"requestsCount"
+);
+
+const decisionModal =
+document.getElementById(
+"decisionModal"
+);
+
+const decisionRequestInfo =
+document.getElementById(
+"decisionRequestInfo"
+);
+
+const decisionNote =
+document.getElementById(
+"decisionNote"
+);
+
+const decisionError =
+document.getElementById(
+"decisionError"
+);
+
+const sidebar =
+document.getElementById(
+"sidebar"
+);
+
+const sidebarOverlay =
+document.getElementById(
+"sidebarOverlay"
+);
+
+const taskConflictBox =
+document.getElementById(
+"taskConflictBox"
+);
+
+
+function escapeHtml(value) {
+
+return String(
+value ?? ""
+)
+.replaceAll(
+"&",
+"&amp;"
+)
+.replaceAll(
+"<",
+"&lt;"
+)
+.replaceAll(
+">",
+"&gt;"
+)
+.replaceAll(
+'"',
+"&quot;"
+)
+.replaceAll(
+"'",
+"&#039;"
+);
+
+}
+async function protectPage() {
+
+    try {
+
+        const { data, error } =
+            await supabaseClient.auth.getSession();
+
+        if (
+            error ||
+            !data?.session ||
+            !data.session.user
+        ) {
+
+            clearLocalSession();
+
+            window.location.href = "login.html";
+
+            return false;
+        }
+
+        const email = String(
+            data.session.user.email || ""
+        )
+        .trim()
+        .toLowerCase();
+
+        if (
+            !ADMIN_EMAILS.includes(email)
+        ) {
+
+            await supabaseClient.auth.signOut();
+
+            clearLocalSession();
+
+            localStorage.removeItem("miyarAdminType");
+            localStorage.removeItem("miyarAdminName");
+
+            window.location.href = "login.html";
+
+            return false;
+        }
+
+        localStorage.setItem(
+            "miyarRole",
+            "admin"
+        );
+
+        localStorage.setItem(
+            "miyarEmail",
+            email
+        );
+
+        if (
+            email === "miyar.hr@gmail.com"
+        ) {
+
+            localStorage.setItem(
+                "miyarAdminType",
+                "hr"
+            );
+
+            localStorage.setItem(
+                "miyarAdminName",
+                "الموارد البشرية"
+            );
+
+        } else {
+
+            localStorage.setItem(
+                "miyarAdminType",
+                "admin"
+            );
+
+            localStorage.setItem(
+                "miyarAdminName",
+                "المسؤول"
+            );
+        }
+
+        return true;
+
+    } catch(error) {
+
+        console.error(
+            "خطأ حماية صفحة طلبات الإجازات:",
+            error
+        );
+
+        window.location.href = "login.html";
+
+        return false;
+    }
+}
+
+async function loadEmployees() {
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from(
+"employees"
+)
+.select(`
+id,
+name,
+employee_number,
+email,
+department,
+job_title
+`)
+.order(
+"name",
+{
+ascending:
+true
+}
+);
+
+if (error) {
+throw error;
+}
+
+employees =
+Array.isArray(
+data
+)
+?
+data
+:
+[];
+
+}
+
+
+async function loadTasks() {
+
+try {
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from(
+"tasks"
+)
+.select(`
+id,
+task_name,
+status,
+assigned_employee_id
+`)
+.order(
+"id",
+{
+ascending:
+false
+}
+);
+
+if (error) {
+throw error;
+}
+
+tasks =
+Array.isArray(
+data
+)
+?
+data
+:
+[];
+
+}
+
+catch(error) {
+
+console.warn(
+"تعذر تحميل المهام لفحص التعارض:",
+error
+);
+
+tasks = [];
+
+}
+
+}
+
+
+async function loadTaskAssignments() {
+
+try {
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from(
+"task_assignments"
+)
+.select(`
+id,
+task_id,
+employee_id,
+decision_id,
+assigned_at,
+created_at
+`);
+
+if (error) {
+throw error;
+}
+
+taskAssignments =
+Array.isArray(
+data
+)
+?
+data
+:
+[];
+
+}
+
+catch(error) {
+
+console.warn(
+"تعذر تحميل إسنادات المهام:",
+error
+);
+
+taskAssignments = [];
+
+}
+
+}
+
+
+async function loadLeaves() {
+
+requestsList.innerHTML = `
+
+<div class="loading-state">
+جارٍ تحميل طلبات الإجازة...
+</div>
+
+`;
+
+try {
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from(
+"employee_leaves"
+)
+.select(`
+id,
+employee_id,
+leave_type,
+start_date,
+end_date,
+status,
+notes,
+created_at,
+reviewed_at,
+decision_note
+`)
+.order(
+"created_at",
+{
+ascending:
+false
+}
+);
+
+if (error) {
+throw error;
+}
+
+leaveRequests =
+Array.isArray(
+data
+)
+?
+data
+:
+[];
+
+enrichRequests();
+
+updateSummary();
+
+filterRequests();
+
+}
+
+catch(error) {
+
+console.error(
+"خطأ تحميل الإجازات:",
+error
+);
+
+requestsList.innerHTML = `
+
+<div class="error-state">
+
+<strong>
+تعذر تحميل طلبات الإجازة
+</strong>
+
+<span>
+${escapeHtml(
+error.message
+||
+""
+)}
+</span>
+
+</div>
+
+`;
+
+}
+
+}
+
+
+function enrichRequests() {
+
+leaveRequests =
+leaveRequests.map(
+request => {
+
+const employee =
+employees.find(
+item =>
+Number(
+item.id
+)
+===
+Number(
+request.employee_id
+)
+)
+||
+null;
+
+return {
+
+...request,
+
+employee
+
+};
+
+}
+);
+
+}
+
+
+function isFinishedTaskStatus(
+status
+) {
+
+const value =
+String(
+status
+||
+""
+)
+.trim()
+.toLowerCase();
+
+const finishedStatuses = [
+
+"مكتملة",
+"مكتمل",
+"منجزة",
+"منجز",
+"تم الإنجاز",
+"تم الانجاز",
+"completed",
+"done",
+"finished",
+"closed"
+
+];
+
+return finishedStatuses.includes(
+value
+);
+
+}
+
+
+function getEmployeeAssignedTasks(
+employeeId
+) {
+
+const employeeIdNumber =
+Number(
+employeeId
+);
+
+const assignedTaskIds =
+new Set(
+
+taskAssignments
+
+.filter(
+assignment =>
+
+Number(
+assignment.employee_id
+)
+===
+employeeIdNumber
+)
+
+.map(
+assignment =>
+
+Number(
+assignment.task_id
+)
+)
+
+);
+
+tasks.forEach(
+task => {
+
+if (
+
+Number(
+task.assigned_employee_id
+)
+===
+employeeIdNumber
+
+&&
+
+!assignedTaskIds.has(
+Number(
+task.id
+)
+)
+
+) {
+
+assignedTaskIds.add(
+Number(
+task.id
+)
+);
+
+}
+
+}
+);
+
+return tasks.filter(
+task =>
+
+assignedTaskIds.has(
+Number(
+task.id
+)
+)
+
+&&
+
+!isFinishedTaskStatus(
+task.status
+)
+);
+
+}
+
+
+function renderTaskConflictWarning(
+request
+) {
+
+selectedRequestConflicts =
+getEmployeeAssignedTasks(
+request.employee_id
+);
+
+if (
+selectedRequestConflicts.length
+===
+0
+) {
+
+taskConflictBox.style.display =
+"block";
+
+taskConflictBox.innerHTML = `
+
+<div
+style="
+padding:14px;
+border-radius:12px;
+background:rgba(46,125,50,0.08);
+border:1px solid rgba(46,125,50,0.20);
+"
+>
+
+<strong>
+لا توجد مهام نشطة مسندة للموظف حالياً
+</strong>
+
+<p
+style="
+margin:6px 0 0;
+font-size:13px;
+"
+>
+يمكن مراجعة طلب الإجازة واتخاذ القرار.
+</p>
+
+</div>
+
+`;
+
+return;
+
+}
+
+const tasksHtml =
+selectedRequestConflicts
+
+.map(
+task => `
+
+<li
+style="
+margin-bottom:6px;
+"
+>
+
+${escapeHtml(
+task.task_name
+||
+"مهمة بدون اسم"
+)}
+
+${
+task.status
+?
+` — ${escapeHtml(
+task.status
+)}`
+:
+""
+}
+
+</li>
+
+`
+)
+
+.join(
+""
+);
+
+taskConflictBox.style.display =
+"block";
+
+taskConflictBox.innerHTML = `
+
+<div
+style="
+padding:14px;
+border-radius:12px;
+background:rgba(194,122,0,0.08);
+border:1px solid rgba(194,122,0,0.25);
+"
+>
+
+<strong>
+تنبيه قبل اعتماد الإجازة
+</strong>
+
+<p
+style="
+margin:7px 0;
+font-size:13px;
+line-height:1.8;
+"
+>
+
+لدى الموظف
+${selectedRequestConflicts.length}
+مهمة نشطة مسندة إليه حالياً.
+
+راجع المهام قبل اعتماد الإجازة.
+
+</p>
+
+<ul
+style="
+margin:8px 18px 0 0;
+padding:0;
+font-size:13px;
+"
+>
+
+${tasksHtml}
+
+</ul>
+
+</div>
+
+`;
+
+}
+
+
+function renderRequests(
+list
+) {
+
+requestsList.innerHTML =
+"";
+
+requestsCount.textContent =
+`${list.length} طلب`;
+
+if (
+list.length
+===
+0
+) {
+
+requestsList.innerHTML = `
+
+<div class="empty-state">
+
+لا توجد طلبات مطابقة للبحث أو التصفية الحالية.
+
+</div>
+
+`;
+
+return;
+
+}
+
+list.forEach(
+request => {
+
+const employee =
+request.employee
+||
+{};
+
+const card =
+document.createElement(
+"article"
+);
+
+card.className =
+"request-item";
+
+const pending =
+normalizeStatus(
+request.status
+)
+===
+"قيد المراجعة";
+
+const duration =
+calculateDays(
+request.start_date,
+request.end_date
+);
+
+const assignedTasks =
+getEmployeeAssignedTasks(
+request.employee_id
+);
+
+card.innerHTML = `
+
+<div class="request-head">
+
+<div class="employee-block">
+
+<div class="avatar">
+
+${escapeHtml(
+(
+employee.name
+||
+"-"
+)
+.charAt(
+0
+)
+)}
+
+</div>
+
+<div>
+
+<h3>
+
+${escapeHtml(
+employee.name
+||
+"موظف غير معروف"
+)}
+
+</h3>
+
+<p>
+
+${escapeHtml(
+employee.employee_number
+||
+"-"
+)}
+
+<span>
+•
+</span>
+
+${escapeHtml(
+employee.department
+||
+"-"
+)}
+
+</p>
+
+</div>
+
+</div>
+
+<span
+class="
+status-badge
+${getStatusClass(
+request.status
+)}
+"
+>
+
+${escapeHtml(
+normalizeStatus(
+request.status
+)
+||
+"-"
+)}
+
+</span>
+
+</div>
+
+
+<div class="request-info-grid">
+
+<div class="info-item">
+
+<span>
+نوع الإجازة
+</span>
+
+<strong>
+
+${escapeHtml(
+request.leave_type
+||
+"-"
+)}
+
+</strong>
+
+</div>
+
+<div class="info-item">
+
+<span>
+تاريخ البداية
+</span>
+
+<strong>
+
+${formatDate(
+request.start_date
+)}
+
+</strong>
+
+</div>
+
+<div class="info-item">
+
+<span>
+تاريخ النهاية
+</span>
+
+<strong>
+
+${formatDate(
+request.end_date
+)}
+
+</strong>
+
+</div>
+
+<div class="info-item">
+
+<span>
+عدد الأيام
+</span>
+
+<strong>
+
+${duration}
+يوم
+
+</strong>
+
+</div>
+
+<div class="info-item">
+
+<span>
+تاريخ تقديم الطلب
+</span>
+
+<strong>
+
+${formatDateTime(
+request.created_at
+)}
+
+</strong>
+
+</div>
+
+<div class="info-item">
+
+<span>
+المسمى الوظيفي
+</span>
+
+<strong>
+
+${escapeHtml(
+employee.job_title
+||
+"-"
+)}
+
+</strong>
+
+</div>
+
+</div>
+
+
+${
+assignedTasks.length
+>
+0
+
+?
+
+`
+
+<div class="request-note">
+
+<span>
+المهام النشطة المسندة حالياً
+</span>
+
+<p>
+
+لدى الموظف
+${assignedTasks.length}
+مهمة نشطة.
+
+ستظهر التفاصيل عند مراجعة الطلب.
+
+</p>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+
+${
+request.notes
+
+?
+
+`
+
+<div class="request-note">
+
+<span>
+ملاحظة الموظف
+</span>
+
+<p>
+
+${escapeHtml(
+request.notes
+)}
+
+</p>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+
+${
+request.decision_note
+
+?
+
+`
+
+<div class="decision-note">
+
+<span>
+ملاحظة المسؤول
+</span>
+
+<p>
+
+${escapeHtml(
+request.decision_note
+)}
+
+</p>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+
+${
+request.reviewed_at
+
+?
+
+`
+
+<div class="reviewed-info">
+
+تم اتخاذ القرار بتاريخ:
+
+<strong>
+
+${formatDateTime(
+request.reviewed_at
+)}
+
+</strong>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+
+${
+pending
+
+?
+
+`
+
+<div class="request-actions">
+
+<button
+type="button"
+class="review-btn"
+data-action="review"
+data-id="${request.id}"
+>
+مراجعة الطلب
+</button>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+`;
+
+requestsList.appendChild(
+card
+);
+
+}
+);
+
+}
+
+
+function openDecisionModal(
+id
+) {
+
+const request =
+leaveRequests.find(
+item =>
+
+Number(
+item.id
+)
+===
+Number(
+id
+)
+);
+
+if (
+!request
+) {
+
+return;
+
+}
+
+if (
+normalizeStatus(
+request.status
+)
+!==
+"قيد المراجعة"
+) {
+
+alert(
+"تم اتخاذ قرار على هذا الطلب مسبقاً"
+);
+
+return;
+
+}
+
+selectedRequest =
+request;
+
+decisionError.textContent =
+"";
+
+decisionNote.value =
+"";
+
+const employee =
+request.employee
+||
+{};
+
+decisionRequestInfo.innerHTML = `
+
+<div class="decision-employee">
+
+<div>
+
+<strong>
+
+${escapeHtml(
+employee.name
+||
+"-"
+)}
+
+</strong>
+
+<small>
+
+${escapeHtml(
+employee.job_title
+||
+"-"
+)}
+
+</small>
+
+</div>
+
+<span>
+
+${escapeHtml(
+employee.employee_number
+||
+"-"
+)}
+
+</span>
+
+</div>
+
+
+<div class="decision-grid">
+
+<div>
+
+<span>
+نوع الإجازة
+</span>
+
+<strong>
+
+${escapeHtml(
+request.leave_type
+||
+"-"
+)}
+
+</strong>
+
+</div>
+
+<div>
+
+<span>
+من
+</span>
+
+<strong>
+
+${formatDate(
+request.start_date
+)}
+
+</strong>
+
+</div>
+
+<div>
+
+<span>
+إلى
+</span>
+
+<strong>
+
+${formatDate(
+request.end_date
+)}
+
+</strong>
+
+</div>
+
+<div>
+
+<span>
+المدة
+</span>
+
+<strong>
+
+${calculateDays(
+request.start_date,
+request.end_date
+)}
+
+يوم
+
+</strong>
+
+</div>
+
+</div>
+
+
+${
+request.notes
+
+?
+
+`
+
+<div class="modal-employee-note">
+
+<span>
+ملاحظة الموظف
+</span>
+
+<p>
+
+${escapeHtml(
+request.notes
+)}
+
+</p>
+
+</div>
+
+`
+
+:
+
+""
+}
+
+`;
+
+renderTaskConflictWarning(
+request
+);
+
+decisionModal
+.classList
+.add(
+"show"
+);
+
+document.body
+.classList
+.add(
+"modal-open"
+);
+
+}
+
+
+function closeDecisionModal() {
+
+selectedRequest =
+null;
+
+selectedRequestConflicts =
+[];
+
+decisionNote.value =
+"";
+
+decisionError.textContent =
+"";
+
+taskConflictBox.innerHTML =
+"";
+
+taskConflictBox.style.display =
+"none";
+
+decisionModal
+.classList
+.remove(
+"show"
+);
+
+document.body
+.classList
+.remove(
+"modal-open"
+);
+
+}
+
+
+function confirmApprovalWithTasks() {
+
+if (
+selectedRequestConflicts.length
+===
+0
+) {
+
+return true;
+
+}
+
+const taskNames =
+selectedRequestConflicts
+
+.slice(
+0,
+5
+)
+
+.map(
+task =>
+
+"• "
++
+(
+task.task_name
+||
+"مهمة بدون اسم"
+)
+)
+
+.join(
+"\n"
+);
+
+const extra =
+selectedRequestConflicts.length
+>
+5
+
+?
+
+`\nو${selectedRequestConflicts.length - 5} مهام أخرى.`
+
+:
+
+"";
+
+return confirm(
+
+"تنبيه: الموظف لديه مهام نشطة مسندة إليه حالياً:\n\n"
+
++
+
+taskNames
+
++
+
+extra
+
++
+
+"\n\nاعتماد الإجازة سيجعل الإجازة المعتمدة تؤثر على توفر الموظف في المطابقة خلال مدتها."
+
++
+
+"\n\nهل تريد اعتماد الطلب؟"
+
+);
+
+}
+
+
+async function updateLeaveStatus(
+newStatus
+) {
+
+if (
+!selectedRequest
+) {
+
+return;
+
+}
+
+const currentStatus =
+normalizeStatus(
+selectedRequest.status
+);
+
+if (
+currentStatus
+!==
+"قيد المراجعة"
+) {
+
+alert(
+"تم اتخاذ قرار على هذا الطلب مسبقاً"
+);
+
+closeDecisionModal();
+
+return;
+
+}
+
+const note =
+decisionNote
+.value
+.trim();
+
+if (
+newStatus
+===
+"مرفوضة"
+
+&&
+
+note.length
+<
+3
+) {
+
+decisionError.textContent =
+"يرجى كتابة سبب رفض الطلب.";
+
+decisionNote.focus();
+
+return;
+
+}
+
+if (
+newStatus
+===
+"معتمدة"
+
+&&
+
+selectedRequestConflicts.length
+>
+0
+) {
+
+const approved =
+confirmApprovalWithTasks();
+
+if (
+!approved
+) {
+
+return;
+
+}
+
+}
+
+decisionError.textContent =
+"";
+
+setDecisionButtonsState(
+true
+);
+
+try {
+
+const {
+data,
+error
+} =
+await supabaseClient
+.from(
+"employee_leaves"
+)
+.update({
+
+status:
+newStatus,
+
+decision_note:
+note
+||
+null,
+
+reviewed_at:
+new Date()
+.toISOString()
+
+})
+.eq(
+"id",
+selectedRequest.id
+)
+.eq(
+"status",
+"قيد المراجعة"
+)
+.select(`
+id,
+status
+`);
+
+if (
+error
+) {
+
+throw error;
+
+}
+
+if (
+!data
+||
+data.length
+===
+0
+) {
+
+throw new Error(
+"تم تحديث هذا الطلب مسبقاً. حدّث الصفحة وحاول مرة أخرى."
+);
+
+}
+
+closeDecisionModal();
+
+await loadLeaves();
+
+if (
+newStatus
+===
+"معتمدة"
+) {
+
+alert(
+"تم اعتماد طلب الإجازة بنجاح. ستُستخدم الإجازة المعتمدة عند حساب توفر الموظف في المطابقة."
+);
+
+}
+
+else {
+
+alert(
+"تم رفض طلب الإجازة وحفظ سبب الرفض."
+);
+
+}
+
+}
+
+catch(error) {
+
+console.error(
+"خطأ حفظ القرار:",
+error
+);
+
+decisionError.textContent =
+error.message
+||
+"تعذر حفظ القرار.";
+
+}
+
+finally {
+
+setDecisionButtonsState(
+false
+);
+
+}
+
+}
+
+
+function setDecisionButtonsState(
+disabled
+) {
+
+document
+.getElementById(
+"approveLeaveBtn"
+)
+.disabled =
+disabled;
+
+document
+.getElementById(
+"rejectLeaveBtn"
+)
+.disabled =
+disabled;
+
+document
+.getElementById(
+"cancelDecisionBtn"
+)
+.disabled =
+disabled;
+
+}
+
+
+function updateSummary() {
+
+const pending =
+leaveRequests.filter(
+item =>
+
+normalizeStatus(
+item.status
+)
+===
+"قيد المراجعة"
+)
+.length;
+
+const approved =
+leaveRequests.filter(
+item =>
+
+normalizeStatus(
+item.status
+)
+===
+"معتمدة"
+)
+.length;
+
+const rejected =
+leaveRequests.filter(
+item =>
+
+normalizeStatus(
+item.status
+)
+===
+"مرفوضة"
+)
+.length;
+
+const currentEmployeeIds =
+new Set(
+
+leaveRequests
+
+.filter(
+item =>
+
+normalizeStatus(
+item.status
+)
+===
+"معتمدة"
+
+&&
+
+isCurrentLeave(
+item
+)
+)
+
+.map(
+item =>
+
+Number(
+item.employee_id
+)
+)
+
+);
+
+document
+.getElementById(
+"summaryTotal"
+)
+.textContent =
+leaveRequests.length;
+
+document
+.getElementById(
+"summaryPending"
+)
+.textContent =
+pending;
+
+document
+.getElementById(
+"summaryApproved"
+)
+.textContent =
+approved;
+
+document
+.getElementById(
+"summaryRejected"
+)
+.textContent =
+rejected;
+
+document
+.getElementById(
+"summaryCurrent"
+)
+.textContent =
+currentEmployeeIds.size;
+
+}
+
+
+function filterRequests() {
+
+const search =
+document
+.getElementById(
+"searchInput"
+)
+.value
+.trim()
+.toLowerCase();
+
+const status =
+document
+.getElementById(
+"statusFilter"
+)
+.value;
+
+const leaveType =
+document
+.getElementById(
+"leaveTypeFilter"
+)
+.value;
+
+const filtered =
+leaveRequests.filter(
+request => {
+
+const employee =
+request.employee
+||
+{};
+
+const searchableText =
+[
+
+employee.name,
+
+employee.employee_number,
+
+employee.email,
+
+employee.department,
+
+employee.job_title,
+
+request.leave_type,
+
+request.notes,
+
+request.decision_note
+
+]
+.join(
+" "
+)
+.toLowerCase();
+
+const searchMatch =
+!search
+||
+searchableText.includes(
+search
+);
+
+const statusMatch =
+!status
+||
+normalizeStatus(
+request.status
+)
+===
+status;
+
+const typeMatch =
+!leaveType
+||
+request.leave_type
+===
+leaveType;
+
+return (
+
+searchMatch
+
+&&
+
+statusMatch
+
+&&
+
+typeMatch
+
+);
+
+}
+);
+
+renderRequests(
+filtered
+);
+
+}
+
+
+function normalizeStatus(
+status
+) {
+
+const value =
+String(
+status
+||
+""
+)
+.trim();
+
+if (
+value === "pending"
+||
+value === "قيد المراجعه"
+) {
+
+return "قيد المراجعة";
+
+}
+
+if (
+value === "approved"
+||
+value === "معتمد"
+||
+value === "مقبولة"
+||
+value === "مقبول"
+) {
+
+return "معتمدة";
+
+}
+
+if (
+value === "rejected"
+||
+value === "مرفوض"
+) {
+
+return "مرفوضة";
+
+}
+
+return value;
+
+}
+
+
+function isCurrentLeave(
+leave
+) {
+
+if (
+!leave.start_date
+||
+!leave.end_date
+) {
+
+return false;
+
+}
+
+const today =
+getTodayDate();
+
+return (
+
+today
+>=
+leave.start_date
+
+&&
+
+today
+<=
+leave.end_date
+
+);
+
+}
+
+
+function getStatusClass(
+status
+) {
+
+const value =
+normalizeStatus(
+status
+);
+
+if (
+value ===
+"معتمدة"
+) {
+
+return "approved";
+
+}
+
+if (
+value ===
+"مرفوضة"
+) {
+
+return "rejected";
+
+}
+
+return "pending";
+
+}
+
+
+function getTodayDate() {
+
+const date =
+new Date();
+
+const year =
+date.getFullYear();
+
+const month =
+String(
+date.getMonth()
++
+1
+)
+.padStart(
+2,
+"0"
+);
+
+const day =
+String(
+date.getDate()
+)
+.padStart(
+2,
+"0"
+);
+
+return `${year}-${month}-${day}`;
+
+}
+
+
+function formatDate(
+value
+) {
+
+if (
+!value
+) {
+
+return "-";
+
+}
+
+const date =
+new Date(
+value
++
+"T00:00:00"
+);
+
+if (
+Number.isNaN(
+date.getTime()
+)
+) {
+
+return "-";
+
+}
+
+return date
+.toLocaleDateString(
+"ar-SA-u-ca-gregory",
+{
+
+year:
+"numeric",
+
+month:
+"2-digit",
+
+day:
+"2-digit"
+
+}
+);
+
+}
+
+
+function formatDateTime(
+value
+) {
+
+if (
+!value
+) {
+
+return "-";
+
+}
+
+const date =
+new Date(
+value
+);
+
+if (
+Number.isNaN(
+date.getTime()
+)
+) {
+
+return "-";
+
+}
+
+return date
+.toLocaleString(
+"ar-SA-u-ca-gregory",
+{
+
+year:
+"numeric",
+
+month:
+"2-digit",
+
+day:
+"2-digit",
+
+hour:
+"2-digit",
+
+minute:
+"2-digit"
+
+}
+);
+
+}
+
+
+function calculateDays(
+startDate,
+endDate
+) {
+
+if (
+!startDate
+||
+!endDate
+) {
+
+return 0;
+
+}
+
+const start =
+new Date(
+startDate
++
+"T00:00:00"
+);
+
+const end =
+new Date(
+endDate
++
+"T00:00:00"
+);
+
+const difference =
+end
+-
+start;
+
+if (
+difference
+<
+0
+) {
+
+return 0;
+
+}
+
+return (
+
+Math.floor(
+difference
+/
+86400000
+)
+
++
+
+1
+
+);
+
+}
+
+
+function openSidebar() {
+
+sidebar
+.classList
+.add(
+"show"
+);
+
+sidebarOverlay
+.classList
+.add(
+"show"
+);
+
+document.body
+.classList
+.add(
+"menu-open"
+);
+
+}
+
+
+function closeSidebar() {
+
+sidebar
+.classList
+.remove(
+"show"
+);
+
+sidebarOverlay
+.classList
+.remove(
+"show"
+);
+
+document.body
+.classList
+.remove(
+"menu-open"
+);
+
+}
+
+
+function clearLocalSession() {
+
+localStorage.removeItem(
+"miyarRole"
+);
+
+localStorage.removeItem(
+"miyarEmail"
+);
+
+localStorage.removeItem(
+"miyarEmployeeId"
+);
+
+localStorage.removeItem(
+"miyarEmployeeName"
+);
+
+}
+
+
+async function logout() {
+
+try {
+
+await supabaseClient
+.auth
+.signOut();
+
+}
+
+catch(error) {
+
+console.error(
+"خطأ تسجيل الخروج:",
+error
+);
+
+}
+
+finally {
+
+clearLocalSession();
+
+window.location.href =
+"login.html";
+
+}
+
+}
+
+
+document
+.getElementById(
+"mobileMenuBtn"
+)
+.addEventListener(
+"click",
+openSidebar
+);
+
+sidebarOverlay
+.addEventListener(
+"click",
+closeSidebar
+);
+
+document
+.querySelectorAll(
+".nav-link"
+)
+.forEach(
+link => {
+
+link.addEventListener(
+"click",
+closeSidebar
+);
+
+}
+);
+
+document
+.getElementById(
+"searchInput"
+)
+.addEventListener(
+"input",
+filterRequests
+);
+
+document
+.getElementById(
+"statusFilter"
+)
+.addEventListener(
+"change",
+filterRequests
+);
+
+document
+.getElementById(
+"leaveTypeFilter"
+)
+.addEventListener(
+"change",
+filterRequests
+);
+
+requestsList
+.addEventListener(
+"click",
+function(event) {
+
+const button =
+event.target.closest(
+"button[data-action='review']"
+);
+
+if (
+!button
+) {
+
+return;
+
+}
+
+openDecisionModal(
+button.dataset.id
+);
+
+}
+);
+
+document
+.getElementById(
+"approveLeaveBtn"
+)
+.addEventListener(
+"click",
+function() {
+
+updateLeaveStatus(
+"معتمدة"
+);
+
+}
+);
+
+document
+.getElementById(
+"rejectLeaveBtn"
+)
+.addEventListener(
+"click",
+function() {
+
+updateLeaveStatus(
+"مرفوضة"
+);
+
+}
+);
+
+document
+.getElementById(
+"cancelDecisionBtn"
+)
+.addEventListener(
+"click",
+closeDecisionModal
+);
+
+document
+.getElementById(
+"closeDecisionModalBtn"
+)
+.addEventListener(
+"click",
+closeDecisionModal
+);
+
+document
+.getElementById(
+"decisionModalOverlay"
+)
+.addEventListener(
+"click",
+closeDecisionModal
+);
+
+document
+.getElementById(
+"logoutBtn"
+)
+.addEventListener(
+"click",
+logout
+);
+
+window.addEventListener(
+"focus",
+async function() {
+
+try {
+
+await Promise.all([
+
+loadTasks(),
+
+loadTaskAssignments()
+
+]);
+
+filterRequests();
+
+}
+
+catch(error) {
+
+console.warn(
+"تعذر تحديث إسنادات المهام:",
+error
+);
+
+}
+
+}
+);
+
+document
+.addEventListener(
+"DOMContentLoaded",
+async function() {
+
+const allowed =
+await protectPage();
+
+if (
+!allowed
+) {
+
+return;
+
+}
+
+try {
+
+await Promise.all([
+
+loadEmployees(),
+
+loadTasks(),
+
+loadTaskAssignments()
+
+]);
+
+await loadLeaves();
+
+}
+
+catch(error) {
+
+console.error(
+"خطأ تحميل الصفحة:",
+error
+);
+
+requestsList.innerHTML = `
+
+<div class="error-state">
+
+<strong>
+تعذر تحميل البيانات
+</strong>
+
+<span>
+
+${escapeHtml(
+error.message
+||
+""
+)}
+
+</span>
+
+</div>
+
+`;
+
+}
+
+}
+);
+
+</script>
+
+</body>
+</html>
