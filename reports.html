@@ -1,0 +1,3780 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>معيار | التقارير</title>
+
+    <link rel="stylesheet" href="reports.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+
+<div class="reports-page">
+
+    <!-- هيدر الجوال -->
+    <header class="mobile-header">
+
+        <button
+            class="mobile-menu-btn"
+            id="mobileMenuBtn"
+            type="button"
+            aria-label="فتح القائمة"
+        >
+            ☰
+        </button>
+
+        <div class="mobile-header-title">
+            <h2>التقارير</h2>
+            <span>معيار</span>
+        </div>
+
+        <img
+            src="assets/logo.png"
+            alt="معيار"
+            class="mobile-logo"
+        >
+
+    </header>
+
+
+    <div
+        class="sidebar-overlay"
+        id="sidebarOverlay"
+    ></div>
+
+
+    <!-- القائمة الجانبية -->
+    <aside
+        class="sidebar"
+        id="sidebar"
+    >
+
+        <div class="sidebar-logo">
+
+            <img
+                src="assets/logo.png"
+                alt="معيار"
+            >
+
+        </div>
+
+
+        <nav class="sidebar-nav">
+
+            <a
+                href="dashboard.html"
+                class="nav-link"
+            >
+                لوحة التحكم
+            </a>
+
+            <a
+                href="employees.html"
+                class="nav-link"
+            >
+                الموظفون
+            </a>
+
+            <a
+                href="projects.html"
+                class="nav-link"
+            >
+                المشاريع
+            </a>
+
+            <a
+                href="tasks.html"
+                class="nav-link"
+            >
+                المهام
+            </a>
+
+            <a
+                href="matching.html"
+                class="nav-link"
+            >
+                المطابقة والترشيح
+            </a>
+
+            <a
+                href="evaluations.html"
+                class="nav-link"
+            >
+                التقييمات
+            </a>
+
+            <a
+                href="decisions.html"
+                class="nav-link"
+            >
+                القرارات
+            </a>
+
+            <a
+                href="leaves.html"
+                class="nav-link"
+            >
+                طلبات الإجازات
+            </a>
+
+            <a
+                href="reports.html"
+                class="nav-link active"
+            >
+                التقارير
+            </a>
+
+        </nav>
+
+
+        <button
+            class="logout-btn"
+            type="button"
+            id="logoutBtn"
+        >
+            تسجيل الخروج
+        </button>
+
+    </aside>
+
+
+    <!-- المحتوى -->
+    <main class="main-content">
+
+        <header class="topbar">
+
+            <div>
+
+                <span class="page-badge">
+                    تقارير وتحليلات
+                </span>
+
+                <h1>
+                    التقارير
+                </h1>
+
+                <p>
+                    عرض وتحليل بيانات الموظفين والمهام والأداء ونتائج المطابقة والإجازات لدعم اتخاذ القرار.
+                </p>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="print-btn"
+                id="printBtn"
+            >
+                طباعة / حفظ PDF
+            </button>
+
+        </header>
+
+
+        <!-- أدوات التقارير -->
+        <section class="report-tools">
+
+            <div class="filter-group">
+
+                <label for="periodFilter">
+                    الفترة
+                </label>
+
+                <select id="periodFilter">
+
+                    <option value="all">
+                        جميع الفترات
+                    </option>
+
+                    <option value="week">
+                        هذا الأسبوع
+                    </option>
+
+                    <option value="month">
+                        هذا الشهر
+                    </option>
+
+                    <option value="year">
+                        هذه السنة
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="projectFilter">
+                    المشروع
+                </label>
+
+                <select id="projectFilter">
+
+                    <option value="all">
+                        جميع المشاريع
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <button
+                class="refresh-btn"
+                type="button"
+                id="refreshBtn"
+            >
+                تحديث التقارير
+            </button>
+
+        </section>
+
+
+        <!-- الملخص -->
+        <section class="summary-grid">
+
+            <article class="summary-card">
+
+                <span class="card-title">
+                    المهام المسندة
+                </span>
+
+                <strong id="tasksDistribution">
+                    0
+                </strong>
+
+                <p>
+                    عدد المهام المسندة إلى موظفين.
+                </p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <span class="card-title">
+                    متوسط ضغط العمل
+                </span>
+
+                <strong id="workloadSummary">
+                    0%
+                </strong>
+
+                <p>
+                    محسوب من المهام النشطة المسندة فعلياً.
+                </p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <span class="card-title">
+                    متوسط الأداء
+                </span>
+
+                <strong id="performanceSummary">
+                    0/5
+                </strong>
+
+                <p>
+                    متوسط نتائج تقييم الموظفين.
+                </p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <span class="card-title">
+                    متوسط المطابقة
+                </span>
+
+                <strong id="matchingSummary">
+                    0%
+                </strong>
+
+                <p>
+                    متوسط نسب التوافق في القرارات.
+                </p>
+
+            </article>
+
+
+            <article class="summary-card">
+
+                <span class="card-title">
+                    مديرو المشاريع
+                </span>
+
+                <strong id="projectManagersSummary">
+                    0
+                </strong>
+
+                <p>
+                    عدد الموظفين الذين تولوا إدارة مشروع.
+                </p>
+
+            </article>
+
+        </section>
+
+
+        <!-- شبكة التقارير -->
+        <section class="reports-grid">
+
+
+            <!-- 01 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        01
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            توزيع المهام على الموظفين
+                        </h2>
+
+                        <p>
+                            الموظفون والمهام المسندة إليهم.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="taskDistributionList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 02 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        02
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            ضغط العمل
+                        </h2>
+
+                        <p>
+                            مستوى ضغط العمل حسب المهام النشطة المسندة.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="workloadList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 03 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        03
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            أداء الموظفين
+                        </h2>
+
+                        <p>
+                            متوسط تقييم كل موظف من سجل التقييمات.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="performanceList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 04 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        04
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            نتائج المطابقة والقرارات
+                        </h2>
+
+                        <p>
+                            المرشح المعتمد ونسبة التوافق وقرار المسؤول.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="matchingList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 05 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        05
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            أكثر المهارات المطلوبة
+                        </h2>
+
+                        <p>
+                            المهارات الأكثر تكراراً في متطلبات المهام.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="skillsList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 06 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        06
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            المشاريع والمهام الحالية
+                        </h2>
+
+                        <p>
+                            المهام وحالتها والمشروع المرتبط بها.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="currentWorkList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 07 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        07
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            الإجازات المعتمدة
+                        </h2>
+
+                        <p>
+                            الإجازات التي تؤثر على توفر الموظفين.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="leaveList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 08 -->
+            <article class="report-card">
+
+                <div class="report-card-header">
+
+                    <span class="report-number">
+                        08
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            مديرو المشاريع
+                        </h2>
+
+                        <p>
+                            الموظفون الذين تولوا إدارة المشاريع وعدد المشاريع لكل مدير.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="report-content"
+                    id="projectManagersList"
+                >
+                    <div class="empty-report">
+                        جارٍ تحميل البيانات...
+                    </div>
+                </div>
+
+            </article>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+
+/* =====================================================
+   Supabase
+===================================================== */
+
+const SUPABASE_URL =
+"https://avooyglxacytrfhvotsl.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_NVlWEnA_w4KbSse_-70zdA_J9ut0Kyo";
+
+const ADMIN_EMAILS = [
+    "miyar.admin@gmail.com",
+    "miyar.hr@gmail.com"
+];
+
+const supabaseClient =
+window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+
+/* =====================================================
+   البيانات
+===================================================== */
+
+let employees = [];
+
+let projects = [];
+
+let tasks = [];
+
+let evaluations = [];
+
+let decisions = [];
+
+let taskRequirements = [];
+
+let skills = [];
+
+let employeeLeaves = [];
+
+let taskAssignments = [];
+
+
+
+/* =====================================================
+   العناصر
+===================================================== */
+
+const periodFilter =
+document.getElementById(
+    "periodFilter"
+);
+
+const projectFilter =
+document.getElementById(
+    "projectFilter"
+);
+
+const refreshBtn =
+document.getElementById(
+    "refreshBtn"
+);
+
+const sidebar =
+document.getElementById(
+    "sidebar"
+);
+
+const sidebarOverlay =
+document.getElementById(
+    "sidebarOverlay"
+);
+
+const mobileMenuBtn =
+document.getElementById(
+    "mobileMenuBtn"
+);
+
+
+
+async function protectPage() {
+
+    try {
+
+        const { data, error } =
+            await supabaseClient.auth.getSession();
+
+        if (
+            error ||
+            !data?.session ||
+            !data.session.user
+        ) {
+
+            clearLocalSession();
+
+            window.location.href = "login.html";
+
+            return false;
+        }
+
+        const email = String(
+            data.session.user.email || ""
+        )
+        .trim()
+        .toLowerCase();
+
+        if (
+            !ADMIN_EMAILS.includes(email)
+        ) {
+
+            await supabaseClient.auth.signOut();
+
+            clearLocalSession();
+
+            localStorage.removeItem("miyarAdminType");
+            localStorage.removeItem("miyarAdminName");
+
+            window.location.href = "login.html";
+
+            return false;
+        }
+
+        localStorage.setItem(
+            "miyarRole",
+            "admin"
+        );
+
+        localStorage.setItem(
+            "miyarEmail",
+            email
+        );
+
+        if (
+            email === "miyar.hr@gmail.com"
+        ) {
+
+            localStorage.setItem(
+                "miyarAdminType",
+                "hr"
+            );
+
+            localStorage.setItem(
+                "miyarAdminName",
+                "الموارد البشرية"
+            );
+
+        } else {
+
+            localStorage.setItem(
+                "miyarAdminType",
+                "admin"
+            );
+
+            localStorage.setItem(
+                "miyarAdminName",
+                "المسؤول"
+            );
+        }
+
+        return true;
+
+    } catch(error) {
+
+        console.error(
+            "خطأ حماية صفحة التقارير:",
+            error
+        );
+
+        window.location.href = "login.html";
+
+        return false;
+    }
+}
+
+/* =====================================================
+   تحميل الموظفين
+===================================================== */
+
+async function loadEmployees() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "employees"
+        )
+        .select(`
+            id,
+            name,
+            employee_number,
+            job_title,
+            department,
+            experience_years,
+            availability,
+            workload,
+            status
+        `)
+        .order(
+            "name",
+            {
+                ascending:true
+            }
+        );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    employees =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+}
+
+
+
+/* =====================================================
+   تحميل المشاريع
+===================================================== */
+
+async function loadProjects() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "projects"
+        )
+        .select(`
+            id,
+            project_name,
+            project_manager,
+            project_manager_id,
+            start_date,
+            end_date,
+            status
+        `)
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    projects =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+
+    renderProjectFilter();
+
+}
+
+
+
+/* =====================================================
+   تحميل المهام
+===================================================== */
+
+async function loadTasks() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "tasks"
+        )
+        .select(`
+            id,
+            project_id,
+            task_name,
+            priority,
+            due_date,
+            status,
+            assigned_employee_id
+        `)
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    tasks =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+}
+
+
+
+/* =====================================================
+   تحميل إسنادات المهام
+===================================================== */
+
+async function loadTaskAssignments() {
+
+    try {
+
+        const {
+            data,
+            error
+        } =
+        await supabaseClient
+            .from(
+                "task_assignments"
+            )
+            .select(`
+                id,
+                task_id,
+                employee_id,
+                decision_id,
+                assigned_at,
+                created_at
+            `);
+
+
+        if (error) {
+
+            throw error;
+
+        }
+
+
+        taskAssignments =
+        Array.isArray(data)
+        ?
+        data
+        :
+        [];
+
+    }
+
+    catch(error) {
+
+        console.warn(
+            "تعذر تحميل إسنادات المهام:",
+            error
+        );
+
+        taskAssignments = [];
+
+    }
+
+}
+
+
+
+/* =====================================================
+   تحميل التقييمات
+===================================================== */
+
+async function loadEvaluations() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "evaluations"
+        )
+        .select(`
+            id,
+            employee_id,
+            task_id,
+            achievement_level,
+            performance_rating,
+            notes,
+            evaluation_date,
+            created_at
+        `)
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    evaluations =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+}
+
+
+
+/* =====================================================
+   تحميل القرارات
+===================================================== */
+
+async function loadDecisions() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "decisions"
+        )
+        .select(`
+            id,
+            task_id,
+            system_candidate_id,
+            selected_employee_id,
+            match_rate,
+            reason,
+            decision_date
+        `)
+        .order(
+            "id",
+            {
+                ascending:false
+            }
+        );
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    decisions =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+}
+
+
+
+/* =====================================================
+   تحميل متطلبات المهام
+===================================================== */
+
+async function loadTaskRequirements() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from("task_requirements")
+        .select(`
+            id,
+            task_id,
+            skill_id,
+            required_level,
+            experience_required,
+            availability_required,
+            job_level_required,
+            skills_weight,
+            experience_weight,
+            job_level_weight,
+            availability_weight,
+            employees_required
+        `);
+
+    if (error) {
+        console.error(
+            "خطأ تحميل متطلبات المهام:",
+            error
+        );
+
+        throw error;
+    }
+
+    taskRequirements =
+        Array.isArray(data)
+        ? data
+        : [];
+
+}
+
+
+/* =====================================================
+   تحميل المهارات
+===================================================== */
+
+async function loadSkills() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "skills"
+        )
+        .select(`
+            id,
+            skill_name
+        `);
+
+
+    if (error) {
+
+        throw error;
+
+    }
+
+
+    skills =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+}
+
+
+
+/* =====================================================
+   تحميل الإجازات
+===================================================== */
+
+async function loadEmployeeLeaves() {
+
+    const {
+        data,
+        error
+    } =
+    await supabaseClient
+        .from(
+            "employee_leaves"
+        )
+        .select(`
+            id,
+            employee_id,
+            leave_type,
+            start_date,
+            end_date,
+            status
+        `)
+        .order(
+            "start_date",
+            {
+                ascending:false
+            }
+        );
+
+
+    if (error) {
+
+        console.warn(
+            "تعذر تحميل الإجازات:",
+            error
+        );
+
+        employeeLeaves = [];
+
+        return;
+
+    }
+
+
+    employeeLeaves =
+    Array.isArray(data)
+    ?
+    data
+    :
+    [];
+
+}
+
+
+
+/* =====================================================
+   فلتر المشاريع
+===================================================== */
+
+function renderProjectFilter() {
+
+    const currentValue =
+    projectFilter.value
+    ||
+    "all";
+
+
+    projectFilter.innerHTML = `
+        <option value="all">
+            جميع المشاريع
+        </option>
+    `;
+
+
+    projects.forEach(
+        project => {
+
+            const option =
+            document.createElement(
+                "option"
+            );
+
+
+            option.value =
+            project.id;
+
+
+            option.textContent =
+            project.project_name
+            ||
+            "مشروع بدون اسم";
+
+
+            projectFilter.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    const exists =
+    [...projectFilter.options]
+    .some(
+        option =>
+            String(option.value)
+            ===
+            String(currentValue)
+    );
+
+
+    projectFilter.value =
+    exists
+    ?
+    currentValue
+    :
+    "all";
+
+}
+
+
+
+/* =====================================================
+   مساعدات
+===================================================== */
+
+function getEmployee(employeeId) {
+
+    return employees.find(
+        employee =>
+            String(employee.id)
+            ===
+            String(employeeId)
+    )
+    ||
+    null;
+
+}
+
+
+function getEmployeeName(employeeId) {
+
+    return (
+        getEmployee(employeeId)?.name
+        ||
+        "غير معروف"
+    );
+
+}
+
+
+function getTask(taskId) {
+
+    return tasks.find(
+        task =>
+            String(task.id)
+            ===
+            String(taskId)
+    )
+    ||
+    null;
+
+}
+
+
+function getProject(projectId) {
+
+    return projects.find(
+        project =>
+            String(project.id)
+            ===
+            String(projectId)
+    )
+    ||
+    null;
+
+}
+
+
+function getProjectName(projectId) {
+
+    return (
+        getProject(projectId)?.project_name
+        ||
+        "غير محدد"
+    );
+
+}
+
+
+function getSkillName(skillId) {
+
+    const skill =
+    skills.find(
+        item =>
+            String(item.id)
+            ===
+            String(skillId)
+    );
+
+
+    return (
+        skill?.skill_name
+        ||
+        "مهارة غير معروفة"
+    );
+
+}
+
+
+function escapeHtml(value) {
+
+    return String(
+        value
+        ??
+        ""
+    )
+    .replaceAll(
+        "&",
+        "&amp;"
+    )
+    .replaceAll(
+        "<",
+        "&lt;"
+    )
+    .replaceAll(
+        ">",
+        "&gt;"
+    )
+    .replaceAll(
+        '"',
+        "&quot;"
+    )
+    .replaceAll(
+        "'",
+        "&#039;"
+    );
+
+}
+
+
+function formatDate(value) {
+
+    if (!value) {
+
+        return "-";
+
+    }
+
+
+    const date =
+    new Date(
+        String(value).includes("T")
+        ?
+        value
+        :
+        value + "T00:00:00"
+    );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return value;
+
+    }
+
+
+    return date.toLocaleDateString(
+        "ar-SA",
+        {
+            year:"numeric",
+            month:"2-digit",
+            day:"2-digit"
+        }
+    );
+
+}
+
+
+function formatNumber(value) {
+
+    const number =
+    Number(value || 0);
+
+
+    if (
+        Number.isInteger(number)
+    ) {
+
+        return String(number);
+
+    }
+
+
+    return number
+        .toFixed(2)
+        .replace(
+            /\.?0+$/,
+            ""
+        );
+
+}
+
+
+
+/* =====================================================
+   حالة المهمة
+===================================================== */
+
+function normalizeTaskStatus(status) {
+
+    return String(
+        status
+        ||
+        ""
+    )
+    .trim()
+    .toLowerCase();
+
+}
+
+
+function isFinishedTask(task) {
+
+    const status =
+    normalizeTaskStatus(
+        task?.status
+    );
+
+
+    const finishedStatuses = [
+        "مكتملة",
+        "مكتمل",
+        "منجزة",
+        "منجز",
+        "تم الإنجاز",
+        "تم الانجاز",
+        "منتهي",
+        "منتهية",
+        "completed",
+        "done",
+        "finished",
+        "closed"
+    ];
+
+
+    return finishedStatuses.includes(
+        status
+    );
+
+}
+
+
+
+/* =====================================================
+   الموظفون المسندون للمهمة
+===================================================== */
+
+function getTaskEmployeeIds(taskId) {
+
+    const id =
+    Number(taskId);
+
+
+    const employeeIds =
+    new Set();
+
+
+    taskAssignments
+    .filter(
+        assignment =>
+            Number(
+                assignment.task_id
+            )
+            ===
+            id
+    )
+    .forEach(
+        assignment => {
+
+            if (
+                assignment.employee_id
+                !== null
+                &&
+                assignment.employee_id
+                !== undefined
+            ) {
+
+                employeeIds.add(
+                    Number(
+                        assignment.employee_id
+                    )
+                );
+
+            }
+
+        }
+    );
+
+
+    const task =
+    getTask(id);
+
+
+    if (
+        task
+        &&
+        task.assigned_employee_id
+        !== null
+        &&
+        task.assigned_employee_id
+        !== undefined
+        &&
+        task.assigned_employee_id
+        !== ""
+    ) {
+
+        employeeIds.add(
+            Number(
+                task.assigned_employee_id
+            )
+        );
+
+    }
+
+
+    return [
+        ...employeeIds
+    ];
+
+}
+
+
+function isTaskAssigned(taskId) {
+
+    return (
+        getTaskEmployeeIds(
+            taskId
+        ).length
+        >
+        0
+    );
+
+}
+
+
+function getTaskEmployeeNames(taskId) {
+
+    const ids =
+    getTaskEmployeeIds(
+        taskId
+    );
+
+
+    if (
+        ids.length
+        ===
+        0
+    ) {
+
+        return "غير مسندة";
+
+    }
+
+
+    return ids
+        .map(
+            id =>
+                getEmployeeName(
+                    id
+                )
+        )
+        .join(
+            "، "
+        );
+
+}
+
+
+
+/* =====================================================
+   فلترة الفترة
+===================================================== */
+
+function dateMatchesPeriod(dateValue) {
+
+    const period =
+    periodFilter.value;
+
+
+    if (
+        period
+        ===
+        "all"
+    ) {
+
+        return true;
+
+    }
+
+
+    if (!dateValue) {
+
+        return false;
+
+    }
+
+
+    const date =
+    new Date(
+        dateValue
+    );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    const today =
+    new Date();
+
+
+    if (
+        period
+        ===
+        "year"
+    ) {
+
+        return (
+            date.getFullYear()
+            ===
+            today.getFullYear()
+        );
+
+    }
+
+
+    if (
+        period
+        ===
+        "month"
+    ) {
+
+        return (
+            date.getFullYear()
+            ===
+            today.getFullYear()
+            &&
+            date.getMonth()
+            ===
+            today.getMonth()
+        );
+
+    }
+
+
+    if (
+        period
+        ===
+        "week"
+    ) {
+
+        const start =
+        new Date(
+            today
+        );
+
+
+        start.setHours(
+            0,
+            0,
+            0,
+            0
+        );
+
+
+        const day =
+        start.getDay();
+
+
+        start.setDate(
+            start.getDate()
+            -
+            day
+        );
+
+
+        const end =
+        new Date(
+            start
+        );
+
+
+        end.setDate(
+            start.getDate()
+            +
+            7
+        );
+
+
+        return (
+            date >= start
+            &&
+            date < end
+        );
+
+    }
+
+
+    return true;
+
+}
+
+
+
+/* =====================================================
+   فلترة المهام
+===================================================== */
+
+function getFilteredTasks() {
+
+    const selectedProject =
+    projectFilter.value;
+
+
+    return tasks.filter(
+        task => {
+
+            const projectMatch =
+            selectedProject
+            ===
+            "all"
+            ||
+            Number(
+                task.project_id
+            )
+            ===
+            Number(
+                selectedProject
+            );
+
+
+            const dateMatch =
+            dateMatchesPeriod(
+                task.due_date
+            );
+
+
+            return (
+                projectMatch
+                &&
+                dateMatch
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   المهام النشطة
+===================================================== */
+
+function getActiveAssignedTasks() {
+
+    return getFilteredTasks()
+        .filter(
+            task =>
+                isTaskAssigned(
+                    task.id
+                )
+                &&
+                !isFinishedTask(
+                    task
+                )
+        );
+
+}
+
+
+function getEmployeeActiveTaskCount(
+    employeeId
+) {
+
+    const id =
+    Number(
+        employeeId
+    );
+
+
+    return getActiveAssignedTasks()
+        .filter(
+            task =>
+                getTaskEmployeeIds(
+                    task.id
+                )
+                .includes(
+                    id
+                )
+        )
+        .length;
+
+}
+
+
+function calculateEmployeeWorkload(
+    employeeId
+) {
+
+    const count =
+    getEmployeeActiveTaskCount(
+        employeeId
+    );
+
+
+    return Math.min(
+        100,
+        count * 20
+    );
+
+}
+
+
+function getWorkloadLevel(workload) {
+
+    if (
+        workload >= 80
+    ) {
+
+        return "مرتفع";
+
+    }
+
+
+    if (
+        workload >= 40
+    ) {
+
+        return "متوسط";
+
+    }
+
+
+    return "منخفض";
+
+}
+
+
+
+/* =====================================================
+   التقييمات
+===================================================== */
+
+function getEvaluationRating(
+    evaluation
+) {
+
+    const rating =
+    Number(
+        evaluation?.performance_rating
+        ||
+        0
+    );
+
+
+    if (
+        !Number.isFinite(
+            rating
+        )
+    ) {
+
+        return 0;
+
+    }
+
+
+    return Math.max(
+        0,
+        Math.min(
+            5,
+            rating
+        )
+    );
+
+}
+
+
+function getEvaluationDate(
+    evaluation
+) {
+
+    return (
+        evaluation?.evaluation_date
+        ||
+        evaluation?.created_at
+        ||
+        ""
+    );
+
+}
+
+
+function getFilteredEvaluations() {
+
+    const selectedProject =
+    projectFilter.value;
+
+
+    return evaluations.filter(
+        evaluation => {
+
+            const task =
+            getTask(
+                evaluation.task_id
+            );
+
+
+            const projectMatch =
+            selectedProject
+            ===
+            "all"
+            ||
+            (
+                task
+                &&
+                Number(
+                    task.project_id
+                )
+                ===
+                Number(
+                    selectedProject
+                )
+            );
+
+
+            return (
+                projectMatch
+                &&
+                dateMatchesPeriod(
+                    getEvaluationDate(
+                        evaluation
+                    )
+                )
+            );
+
+        }
+    );
+
+}
+
+
+function getEmployeeAverageRating(
+    employeeId,
+    sourceEvaluations = evaluations
+) {
+
+    const ratings =
+    sourceEvaluations
+        .filter(
+            evaluation =>
+                Number(
+                    evaluation.employee_id
+                )
+                ===
+                Number(
+                    employeeId
+                )
+        )
+        .map(
+            getEvaluationRating
+        )
+        .filter(
+            rating =>
+                rating > 0
+        );
+
+
+    if (
+        ratings.length === 0
+    ) {
+
+        return 0;
+
+    }
+
+
+    const total =
+    ratings.reduce(
+        (
+            sum,
+            rating
+        ) =>
+            sum + rating,
+        0
+    );
+
+
+    return (
+        total
+        /
+        ratings.length
+    );
+
+}
+
+
+
+/* =====================================================
+   القرارات
+===================================================== */
+
+function getFilteredDecisions() {
+
+    const selectedProject =
+    projectFilter.value;
+
+
+    return decisions.filter(
+        decision => {
+
+            const task =
+            getTask(
+                decision.task_id
+            );
+
+
+            const projectMatch =
+            selectedProject
+            ===
+            "all"
+            ||
+            (
+                task
+                &&
+                Number(
+                    task.project_id
+                )
+                ===
+                Number(
+                    selectedProject
+                )
+            );
+
+
+            return (
+                projectMatch
+                &&
+                dateMatchesPeriod(
+                    decision.decision_date
+                )
+            );
+
+        }
+    );
+
+}
+
+
+function decisionWasChanged(
+    decision
+) {
+
+    if (
+        !decision.system_candidate_id
+        ||
+        !decision.selected_employee_id
+    ) {
+
+        return false;
+
+    }
+
+
+    return (
+        Number(
+            decision.system_candidate_id
+        )
+        !==
+        Number(
+            decision.selected_employee_id
+        )
+    );
+
+}
+
+
+
+/* =====================================================
+   الإجازات
+===================================================== */
+
+function isApprovedLeave(
+    leave
+) {
+
+    const status =
+    String(
+        leave?.status
+        ||
+        ""
+    )
+    .trim()
+    .toLowerCase();
+
+
+    return (
+        status === "معتمدة"
+        ||
+        status === "معتمد"
+        ||
+        status === "approved"
+        ||
+        status === "accepted"
+        ||
+        status === "مقبول"
+        ||
+        status === "مقبولة"
+    );
+
+}
+
+
+function getFilteredLeaves() {
+
+    return employeeLeaves.filter(
+        leave =>
+            isApprovedLeave(
+                leave
+            )
+            &&
+            (
+                periodFilter.value === "all"
+                ||
+                dateMatchesPeriod(
+                    leave.start_date
+                )
+            )
+    );
+
+}
+
+
+
+/* =====================================================
+   إنشاء صف تقرير
+===================================================== */
+
+function createReportRow(
+    title,
+    subtitle,
+    badge,
+    badgeClass = "value-badge"
+) {
+
+    const row =
+    document.createElement(
+        "div"
+    );
+
+
+    row.className =
+    "report-row";
+
+
+    row.innerHTML = `
+
+        <div>
+
+            <strong>
+                ${escapeHtml(title)}
+            </strong>
+
+            <span>
+                ${escapeHtml(subtitle)}
+            </span>
+
+        </div>
+
+        <span class="${escapeHtml(badgeClass)}">
+            ${escapeHtml(badge)}
+        </span>
+
+    `;
+
+
+    return row;
+
+}
+
+
+function showEmpty(
+    container,
+    text
+) {
+
+    container.innerHTML = `
+
+        <div class="empty-report">
+            ${escapeHtml(text)}
+        </div>
+
+    `;
+
+}
+
+
+
+/* =====================================================
+   01 توزيع المهام
+===================================================== */
+
+function renderTaskDistribution() {
+
+    const container =
+    document.getElementById(
+        "taskDistributionList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const filteredTasks =
+    getFilteredTasks();
+
+
+    const employeeData =
+    employees
+        .map(
+            employee => {
+
+                const employeeTasks =
+                filteredTasks.filter(
+                    task =>
+                        getTaskEmployeeIds(
+                            task.id
+                        )
+                        .includes(
+                            Number(
+                                employee.id
+                            )
+                        )
+                );
+
+
+                return {
+                    employee,
+                    tasks:employeeTasks
+                };
+
+            }
+        )
+        .filter(
+            item =>
+                item.tasks.length > 0
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.tasks.length
+                -
+                a.tasks.length
+        );
+
+
+    if (
+        employeeData.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد مهام مسندة حسب الفلاتر الحالية"
+        );
+
+        return;
+
+    }
+
+
+    employeeData.forEach(
+        item => {
+
+            const taskNames =
+            item.tasks
+                .map(
+                    task =>
+                        task.task_name
+                        ||
+                        "مهمة بدون اسم"
+                )
+                .join(
+                    "، "
+                );
+
+
+            container.appendChild(
+                createReportRow(
+                    item.employee.name
+                    ||
+                    "موظف بدون اسم",
+
+                    taskNames,
+
+                    item.tasks.length
+                    +
+                    " مهمة",
+
+                    "status-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   02 ضغط العمل
+===================================================== */
+
+function renderWorkload() {
+
+    const container =
+    document.getElementById(
+        "workloadList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    if (
+        employees.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد بيانات موظفين"
+        );
+
+        return;
+
+    }
+
+
+    const rows =
+    employees
+        .map(
+            employee => {
+
+                const workload =
+                calculateEmployeeWorkload(
+                    employee.id
+                );
+
+
+                return {
+                    employee,
+                    workload,
+                    taskCount:
+                        getEmployeeActiveTaskCount(
+                            employee.id
+                        )
+                };
+
+            }
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.workload
+                -
+                a.workload
+        );
+
+
+    rows.forEach(
+        item => {
+
+            container.appendChild(
+                createReportRow(
+                    item.employee.name
+                    ||
+                    "موظف بدون اسم",
+
+                    item.taskCount
+                    +
+                    " مهمة نشطة",
+
+                    item.workload
+                    +
+                    "% - "
+                    +
+                    getWorkloadLevel(
+                        item.workload
+                    ),
+
+                    "value-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   03 أداء الموظفين
+===================================================== */
+
+function renderPerformance() {
+
+    const container =
+    document.getElementById(
+        "performanceList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const filteredEvaluations =
+    getFilteredEvaluations();
+
+
+    const employeeRows =
+    employees
+        .map(
+            employee => {
+
+                const employeeEvaluations =
+                filteredEvaluations.filter(
+                    evaluation =>
+                        Number(
+                            evaluation.employee_id
+                        )
+                        ===
+                        Number(
+                            employee.id
+                        )
+                );
+
+
+                return {
+                    employee,
+                    evaluations:
+                        employeeEvaluations,
+                    average:
+                        getEmployeeAverageRating(
+                            employee.id,
+                            filteredEvaluations
+                        )
+                };
+
+            }
+        )
+        .filter(
+            item =>
+                item.evaluations.length > 0
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.average
+                -
+                a.average
+        );
+
+
+    if (
+        employeeRows.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد تقييمات حسب الفلاتر الحالية"
+        );
+
+        return;
+
+    }
+
+
+    employeeRows.forEach(
+        item => {
+
+            container.appendChild(
+                createReportRow(
+                    item.employee.name
+                    ||
+                    "موظف بدون اسم",
+
+                    item.evaluations.length
+                    +
+                    " تقييم",
+
+                    formatNumber(
+                        item.average
+                    )
+                    +
+                    "/5",
+
+                    "value-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   04 نتائج المطابقة والقرارات
+===================================================== */
+
+function renderMatching() {
+
+    const container =
+    document.getElementById(
+        "matchingList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const filteredDecisions =
+    getFilteredDecisions();
+
+
+    if (
+        filteredDecisions.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد قرارات حسب الفلاتر الحالية"
+        );
+
+        return;
+
+    }
+
+
+    filteredDecisions.forEach(
+        decision => {
+
+            const task =
+            getTask(
+                decision.task_id
+            );
+
+
+            const selectedEmployee =
+            getEmployeeName(
+                decision.selected_employee_id
+            );
+
+
+            const systemEmployee =
+            getEmployeeName(
+                decision.system_candidate_id
+            );
+
+
+            const changed =
+            decisionWasChanged(
+                decision
+            );
+
+
+            const subtitle =
+            changed
+            ?
+            "مرشح النظام: "
+            +
+            systemEmployee
+            +
+            " | المعتمد: "
+            +
+            selectedEmployee
+            :
+            "تم اعتماد مرشح النظام: "
+            +
+            selectedEmployee;
+
+
+            container.appendChild(
+                createReportRow(
+                    task?.task_name
+                    ||
+                    "مهمة غير معروفة",
+
+                    subtitle,
+
+                    formatNumber(
+                        decision.match_rate
+                    )
+                    +
+                    "%",
+
+                    "match-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   05 المهارات المطلوبة
+===================================================== */
+
+function renderSkills() {
+
+    const container =
+    document.getElementById(
+        "skillsList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const filteredTaskIds =
+    new Set(
+        getFilteredTasks()
+            .map(
+                task =>
+                    Number(
+                        task.id
+                    )
+            )
+    );
+
+
+    const counts =
+    new Map();
+
+
+    taskRequirements
+        .filter(
+            requirement =>
+                filteredTaskIds.has(
+                    Number(
+                        requirement.task_id
+                    )
+                )
+                &&
+                requirement.skill_id
+        )
+        .forEach(
+            requirement => {
+
+                const key =
+                String(
+                    requirement.skill_id
+                );
+
+
+                counts.set(
+                    key,
+                    (
+                        counts.get(
+                            key
+                        )
+                        ||
+                        0
+                    )
+                    +
+                    1
+                );
+
+            }
+        );
+
+
+    const rows =
+    [...counts.entries()]
+        .map(
+            (
+                [
+                    skillId,
+                    count
+                ]
+            ) => ({
+                skillId,
+                count
+            })
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.count
+                -
+                a.count
+        );
+
+
+    if (
+        rows.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد مهارات مطلوبة حسب الفلاتر الحالية"
+        );
+
+        return;
+
+    }
+
+
+    rows.forEach(
+        item => {
+
+            container.appendChild(
+                createReportRow(
+                    getSkillName(
+                        item.skillId
+                    ),
+
+                    "موجودة ضمن متطلبات المهام",
+
+                    item.count
+                    +
+                    " مرة",
+
+                    "value-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   06 المشاريع والمهام الحالية
+===================================================== */
+
+function renderCurrentWork() {
+
+    const container =
+    document.getElementById(
+        "currentWorkList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const filteredTasks =
+    getFilteredTasks();
+
+
+    if (
+        filteredTasks.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد مهام حسب الفلاتر الحالية"
+        );
+
+        return;
+
+    }
+
+
+    filteredTasks.forEach(
+        task => {
+
+            const employeeNames =
+            getTaskEmployeeNames(
+                task.id
+            );
+
+
+            container.appendChild(
+                createReportRow(
+                    task.task_name
+                    ||
+                    "مهمة بدون اسم",
+
+                    getProjectName(
+                        task.project_id
+                    )
+                    +
+                    " | "
+                    +
+                    employeeNames,
+
+                    task.status
+                    ||
+                    "غير محددة",
+
+                    "status-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   07 الإجازات
+===================================================== */
+
+function renderLeaves() {
+
+    const container =
+    document.getElementById(
+        "leaveList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const leaves =
+    getFilteredLeaves();
+
+
+    if (
+        leaves.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا توجد إجازات معتمدة حسب الفترة الحالية"
+        );
+
+        return;
+
+    }
+
+
+    leaves.forEach(
+        leave => {
+
+            const employee =
+            getEmployee(
+                leave.employee_id
+            );
+
+
+            container.appendChild(
+                createReportRow(
+                    employee?.name
+                    ||
+                    "موظف غير معروف",
+
+                    (
+                        leave.leave_type
+                        ||
+                        "إجازة"
+                    )
+                    +
+                    " | "
+                    +
+                    formatDate(
+                        leave.start_date
+                    )
+                    +
+                    " - "
+                    +
+                    formatDate(
+                        leave.end_date
+                    ),
+
+                    "معتمدة",
+
+                    "leave-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   08 مديرو المشاريع
+===================================================== */
+
+function getProjectsForManagerReport() {
+
+    if (
+        projectFilter.value
+        ===
+        "all"
+    ) {
+
+        return projects.filter(
+            project =>
+                project.project_manager_id
+                !== null
+                &&
+                project.project_manager_id
+                !== undefined
+                &&
+                project.project_manager_id
+                !== ""
+        );
+
+    }
+
+
+    return projects.filter(
+        project =>
+            Number(
+                project.id
+            )
+            ===
+            Number(
+                projectFilter.value
+            )
+            &&
+            project.project_manager_id
+            !== null
+            &&
+            project.project_manager_id
+            !== undefined
+            &&
+            project.project_manager_id
+            !== ""
+    );
+
+}
+
+
+function getUniqueProjectManagerIds() {
+
+    return [
+        ...new Set(
+            getProjectsForManagerReport()
+                .map(
+                    project =>
+                        String(
+                            project.project_manager_id
+                        )
+                )
+        )
+    ];
+
+}
+
+
+function renderProjectManagers() {
+
+    const container =
+    document.getElementById(
+        "projectManagersList"
+    );
+
+
+    container.innerHTML = "";
+
+
+    const managerProjects =
+    getProjectsForManagerReport();
+
+
+    const managerIds =
+    getUniqueProjectManagerIds();
+
+
+    if (
+        managerIds.length === 0
+    ) {
+
+        showEmpty(
+            container,
+            "لا يوجد مديرو مشاريع مسجلون"
+        );
+
+        return;
+
+    }
+
+
+    const rows =
+    managerIds
+        .map(
+            managerId => {
+
+                const employee =
+                getEmployee(
+                    managerId
+                );
+
+
+                const managedProjects =
+                managerProjects.filter(
+                    project =>
+                        String(
+                            project.project_manager_id
+                        )
+                        ===
+                        String(
+                            managerId
+                        )
+                );
+
+
+                const fallbackName =
+                managedProjects.find(
+                    project =>
+                        project.project_manager
+                )?.project_manager
+                ||
+                "مدير مشروع غير معروف";
+
+
+                return {
+
+                    managerId,
+
+                    name:
+                        employee?.name
+                        ||
+                        fallbackName,
+
+                    projects:
+                        managedProjects
+
+                };
+
+            }
+        )
+        .sort(
+            (
+                a,
+                b
+            ) =>
+                b.projects.length
+                -
+                a.projects.length
+        );
+
+
+    rows.forEach(
+        item => {
+
+            const projectNames =
+            item.projects
+                .map(
+                    project =>
+                        project.project_name
+                        ||
+                        "مشروع بدون اسم"
+                )
+                .join(
+                    "، "
+                );
+
+
+            const countText =
+            item.projects.length === 1
+            ?
+            "1 مشروع"
+            :
+            item.projects.length
+            +
+            " مشاريع";
+
+
+            container.appendChild(
+                createReportRow(
+                    item.name,
+                    projectNames,
+                    countText,
+                    "value-badge"
+                )
+            );
+
+        }
+    );
+
+}
+
+
+
+/* =====================================================
+   الملخص العلوي
+===================================================== */
+
+function updateSummary() {
+
+    const filteredTasks =
+    getFilteredTasks();
+
+
+    const assignedTasks =
+    filteredTasks.filter(
+        task =>
+            isTaskAssigned(
+                task.id
+            )
+    );
+
+
+    document
+        .getElementById(
+            "tasksDistribution"
+        )
+        .textContent =
+        assignedTasks.length;
+
+
+    const workloads =
+    employees.map(
+        employee =>
+            calculateEmployeeWorkload(
+                employee.id
+            )
+    );
+
+
+    const averageWorkload =
+    workloads.length
+    ?
+    workloads.reduce(
+        (
+            total,
+            value
+        ) =>
+            total + value,
+        0
+    )
+    /
+    workloads.length
+    :
+    0;
+
+
+    document
+        .getElementById(
+            "workloadSummary"
+        )
+        .textContent =
+        Math.round(
+            averageWorkload
+        )
+        +
+        "%";
+
+
+    const filteredEvaluations =
+    getFilteredEvaluations();
+
+
+    const ratings =
+    filteredEvaluations
+        .map(
+            getEvaluationRating
+        )
+        .filter(
+            rating =>
+                rating > 0
+        );
+
+
+    const averagePerformance =
+    ratings.length
+    ?
+    ratings.reduce(
+        (
+            total,
+            rating
+        ) =>
+            total + rating,
+        0
+    )
+    /
+    ratings.length
+    :
+    0;
+
+
+    document
+        .getElementById(
+            "performanceSummary"
+        )
+        .textContent =
+        formatNumber(
+            averagePerformance
+        )
+        +
+        "/5";
+
+
+    const filteredDecisions =
+    getFilteredDecisions();
+
+
+    const matchRates =
+    filteredDecisions
+        .map(
+            decision =>
+                Number(
+                    decision.match_rate
+                    ||
+                    0
+                )
+        )
+        .filter(
+            value =>
+                Number.isFinite(
+                    value
+                )
+        );
+
+
+    const averageMatching =
+    matchRates.length
+    ?
+    matchRates.reduce(
+        (
+            total,
+            value
+        ) =>
+            total + value,
+        0
+    )
+    /
+    matchRates.length
+    :
+    0;
+
+
+    document
+        .getElementById(
+            "matchingSummary"
+        )
+        .textContent =
+        Math.round(
+            averageMatching
+        )
+        +
+        "%";
+
+
+    document
+        .getElementById(
+            "projectManagersSummary"
+        )
+        .textContent =
+        getUniqueProjectManagerIds().length;
+
+}
+
+
+
+/* =====================================================
+   تشغيل كل التقارير
+===================================================== */
+
+function renderReports() {
+
+    renderTaskDistribution();
+
+    renderWorkload();
+
+    renderPerformance();
+
+    renderMatching();
+
+    renderSkills();
+
+    renderCurrentWork();
+
+    renderLeaves();
+
+    renderProjectManagers();
+
+    updateSummary();
+
+}
+
+
+
+/* =====================================================
+   تحديث البيانات
+===================================================== */
+
+async function refreshReports() {
+
+    refreshBtn.disabled =
+    true;
+
+    refreshBtn.textContent =
+    "جارٍ التحديث...";
+
+
+    try {
+
+        await Promise.all([
+            loadEmployees(),
+            loadProjects(),
+            loadTasks(),
+            loadTaskAssignments(),
+            loadEvaluations(),
+            loadDecisions(),
+            loadTaskRequirements(),
+            loadSkills(),
+            loadEmployeeLeaves()
+        ]);
+
+
+        renderReports();
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "خطأ تحديث التقارير:",
+            error
+        );
+
+
+        alert(
+            "تعذر تحديث التقارير.\n\n"
+            +
+            (
+                error.message
+                ||
+                ""
+            )
+        );
+
+    }
+
+    finally {
+
+        refreshBtn.disabled =
+        false;
+
+        refreshBtn.textContent =
+        "تحديث التقارير";
+
+    }
+
+}
+
+
+
+/* =====================================================
+   القائمة الجانبية
+===================================================== */
+
+function openSidebar() {
+
+    sidebar.classList.add(
+        "show"
+    );
+
+    sidebarOverlay.classList.add(
+        "show"
+    );
+
+    document.body.classList.add(
+        "menu-open"
+    );
+
+}
+
+
+function closeSidebar() {
+
+    sidebar.classList.remove(
+        "show"
+    );
+
+    sidebarOverlay.classList.remove(
+        "show"
+    );
+
+    document.body.classList.remove(
+        "menu-open"
+    );
+
+}
+
+
+
+/* =====================================================
+   تسجيل الخروج
+===================================================== */
+
+function clearLocalSession() {
+
+    localStorage.removeItem(
+        "miyarRole"
+    );
+
+    localStorage.removeItem(
+        "miyarEmail"
+    );
+
+    localStorage.removeItem(
+        "pendingDecision"
+    );
+
+    localStorage.removeItem(
+        "selectedTaskId"
+    );
+
+}
+
+
+async function logout() {
+
+    try {
+
+        await supabaseClient
+            .auth
+            .signOut();
+
+    }
+
+    catch(error) {
+
+        console.error(
+            error
+        );
+
+    }
+
+
+    clearLocalSession();
+
+
+    window.location.href =
+    "login.html";
+
+}
+
+
+
+/* =====================================================
+   الأحداث
+===================================================== */
+
+periodFilter.addEventListener(
+    "change",
+    renderReports
+);
+
+
+projectFilter.addEventListener(
+    "change",
+    renderReports
+);
+
+
+refreshBtn.addEventListener(
+    "click",
+    refreshReports
+);
+
+
+document
+    .getElementById(
+        "printBtn"
+    )
+    .addEventListener(
+        "click",
+        function() {
+
+            window.print();
+
+        }
+    );
+
+
+document
+    .getElementById(
+        "logoutBtn"
+    )
+    .addEventListener(
+        "click",
+        logout
+    );
+
+
+mobileMenuBtn.addEventListener(
+    "click",
+    openSidebar
+);
+
+
+sidebarOverlay.addEventListener(
+    "click",
+    closeSidebar
+);
+
+
+document
+    .querySelectorAll(
+        ".nav-link"
+    )
+    .forEach(
+        link => {
+
+            link.addEventListener(
+                "click",
+                closeSidebar
+            );
+
+        }
+    );
+
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key
+            ===
+            "Escape"
+        ) {
+
+            closeSidebar();
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   تحديث عند الرجوع للصفحة
+===================================================== */
+
+window.addEventListener(
+    "focus",
+    async function() {
+
+        try {
+
+            await Promise.all([
+                loadEmployees(),
+                loadProjects(),
+                loadTasks(),
+                loadTaskAssignments(),
+                loadEvaluations(),
+                loadDecisions(),
+                loadTaskRequirements(),
+                loadSkills(),
+                loadEmployeeLeaves()
+            ]);
+
+
+            renderReports();
+
+        }
+
+        catch(error) {
+
+            console.warn(
+                "تعذر تحديث التقارير:",
+                error
+            );
+
+        }
+
+    }
+);
+
+
+
+/* =====================================================
+   بداية الصفحة
+===================================================== */
+
+async function startPage() {
+
+    const allowed =
+    await protectPage();
+
+
+    if (!allowed) {
+
+        return;
+
+    }
+
+
+    try {
+
+        await Promise.all([
+            loadEmployees(),
+            loadProjects(),
+            loadTasks(),
+            loadTaskAssignments(),
+            loadEvaluations(),
+            loadDecisions(),
+            loadTaskRequirements(),
+            loadSkills(),
+            loadEmployeeLeaves()
+        ]);
+
+
+        renderReports();
+
+    }
+
+    catch(error) {
+
+        console.error(
+            "خطأ تشغيل صفحة التقارير:",
+            error
+        );
+
+
+        document
+            .querySelectorAll(
+                ".report-content"
+            )
+            .forEach(
+                container => {
+
+                    container.innerHTML = `
+                        <div class="empty-report">
+                            تعذر تحميل بيانات التقارير
+                        </div>
+                    `;
+
+                }
+            );
+
+    }
+
+}
+
+
+startPage();
+
+</script>
+
+</body>
+
+</html>
