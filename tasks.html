@@ -1475,62 +1475,42 @@ return due < today;
 }
 
 
-function normalizeTask(row){
 
-return {
+function translateTaskStatus(status) {
+    const statuses = {
+        new: "جديدة",
+        in_progress: "قيد التنفيذ",
+        pending_approval: "بانتظار الاعتماد",
+        completed: "مكتملة",
+        stopped: "متوقفة"
+    };
 
-id:
-row.id,
-
-name:
-row.task_name
-||
-row.name
-||
-"",
-
-projectId:
-row.project_id
-||
-null,
-
-priority:
-row.priority
-||
-"متوسطة",
-
-status:
-row.status
-||
-"جديدة",
-
-dueDate:
-row.due_date
-||
-null,
-
-assignedEmployeeId:
-row.assigned_employee_id
-||
-null,
-
-description:
-row.description
-||
-"",
-
-createdAt:
-row.created_at
-||
-null,
-
-raw:
-row
-
-};
-
+    return statuses[status] || status || "جديدة";
 }
 
+function normalizeTask(row) {
+    return {
+        id: row.id,
+
+        name: row.task_name || row.name || "",
+
+        projectId: row.project_id || null,
+
+        priority: row.priority || "متوسطة",
+
+        status: translateTaskStatus(row.status),
+
+        dueDate: row.due_date || null,
+
+        assignedEmployeeId: row.assigned_employee_id || null,
+
+        description: row.description || "",
+
+        createdAt: row.created_at || null,
+
+        raw: row
+    };
+}
 
 /* ========================================= */
 /* تحميل المهام */
