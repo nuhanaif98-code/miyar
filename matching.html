@@ -1236,16 +1236,20 @@ async function loadTaskRequirements(
     .from(
         "task_requirements"
     )
-    .select(`
-        id,
-        task_id,
-        skill_id,
-        required_level,
-        employees_required,
-        experience_required,
-        availability_required,
-        job_level_required
-    `)
+   .select(`
+    id,
+    task_id,
+    skill_id,
+    required_level,
+    employees_required,
+    experience_required,
+    availability_required,
+    job_level_required,
+    skills_weight,
+    experience_weight,
+    job_level_weight,
+    availability_weight
+`)
     .eq(
         "task_id",
         Number(
@@ -1988,35 +1992,53 @@ function getRequiredSkills() {
    MATCHING WEIGHTS
 ===================================================== */
 
-/*
-    الأوزان النهائية:
-
-    المهارات = 50%
-    الخبرة = 20%
-    المستوى الوظيفي = 15%
-    التفرغ = 15%
-
-    المجموع = 100%
-
-    التقييمات لا تدخل في المطابقة.
-*/
-
 function getTaskWeights() {
 
-    return {
+    const requirement = taskRequirements[0];
 
-        skills:50,
+    if (!requirement) {
+        throw new Error("لا توجد متطلبات محفوظة للمهمة");
+    }
 
-        experience:20,
-
-        jobLevel:15,
-
-        availability:15
-
+    const weights = {
+        skills: Number(requirement.skills_weight),
+        experience: Number(requirement.experience_weight),
+        jobLevel: Number(requirement.job_level_weight),
+        availability: Number(requirement.availability_weight)
     };
 
-}
+    const values = [
+        requirement.skills_weight,
+        requirement.experience_weight,
+        requirement.job_level_weight,
+        requirement.availability_weight
+    ];
 
+    if (values.some(value =>
+        value === null ||
+        value === undefined ||
+        value === "" ||
+        !Number.isFinite(Number(value)) ||
+        Number(value) < 0 ||
+        Number(value) > 100
+    )) {
+        throw new Error("أوزان المهمة غير صحيحة أو غير مكتملة");
+    }
+
+    const total =
+        weights.skills +
+        weights.experience +
+        weights.jobLevel +
+        weights.availability;
+
+    if (Math.abs(total - 100) > 0.001) {
+        throw new Error(
+            `مجموع أوزان المهمة ${total}% ويجب أن يكون 100%`
+        );
+    }
+
+    return weights;
+}
 
 /* =====================================================
    LEAVE
