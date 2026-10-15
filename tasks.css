@@ -2593,3 +2593,161 @@ body.menu-open {
         animation-iteration-count: 1 !important;
     }
 }
+
+/* =========================================
+   MIYAR - TASK TEAM SECTION
+   فريق المهمة
+========================================= */
+
+.task-team-section {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    margin-top: 12px;
+    padding: 15px;
+
+    border: 1px solid rgba(198, 154, 90, 0.28);
+    border-radius: 12px;
+
+    background: rgba(255, 255, 255, 0.50);
+    text-align: right;
+}
+
+.task-team-section .detail-section-title {
+    margin-bottom: 7px;
+    padding-bottom: 10px;
+
+    border-bottom: 1px solid rgba(198, 154, 90, 0.18);
+
+    color: #31586c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.task-team-section > p {
+    margin: 0 0 12px;
+
+    color: #829097;
+    font-size: 8px;
+    line-height: 1.8;
+}
+
+/* بطاقة كل موظف */
+
+.task-team-member {
+    width: 100%;
+    min-width: 0;
+
+    padding: 13px !important;
+    margin-top: 9px !important;
+
+    border: 1px solid rgba(198, 154, 90, 0.25) !important;
+    border-radius: 10px !important;
+
+    background: rgba(249, 247, 242, 0.82);
+}
+
+.task-team-member strong {
+    display: block;
+
+    color: #294858;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.task-team-member div {
+    color: #71828c;
+    font-size: 8px !important;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+}
+
+.task-team-member label {
+    display: block;
+
+    margin-top: 12px;
+
+    color: #a37640;
+    font-size: 9px;
+    font-weight: 600;
+}
+
+/* حقل الجزء المسؤول عنه */
+
+.task-team-member textarea {
+    display: block;
+
+    width: 100%;
+    min-height: 75px;
+
+    margin-top: 7px;
+    padding: 10px 12px !important;
+
+    border: 1px solid rgba(49, 88, 108, 0.16) !important;
+    border-radius: 9px !important;
+
+    outline: none;
+    resize: vertical;
+
+    background: rgba(255, 255, 255, 0.85);
+    color: #344f5d;
+
+    font-family: inherit;
+    font-size: 9px;
+    line-height: 1.8;
+}
+
+.task-team-member textarea:focus {
+    border-color: #31586c !important;
+    box-shadow: 0 0 0 3px rgba(49, 88, 108, 0.05);
+}
+
+.task-team-member textarea::placeholder {
+    color: #9ba5aa;
+}
+
+/* زر الحفظ */
+
+.task-team-member .save-btn {
+    min-width: 105px;
+    height: 36px;
+
+    margin-top: 10px;
+
+    border: 1px solid #315f74;
+    border-radius: 9px;
+
+    background: #315f74;
+    color: #ffffff;
+
+    font-size: 9px;
+    font-weight: 700;
+
+    transition: background 0.2s ease;
+}
+
+.task-team-member .save-btn:hover {
+    background: #294f62;
+}
+
+.task-team-member .save-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* الجوال */
+
+@media (max-width: 520px) {
+
+    .task-team-section {
+        padding: 11px;
+    }
+
+    .task-team-member {
+        padding: 11px !important;
+    }
+
+    .task-team-member .save-btn {
+        width: 100%;
+    }
+}
