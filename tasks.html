@@ -3317,9 +3317,11 @@ null;
 }
 
 
-if(
-!analysis
-){
+if (!analysis) {
+    throw new Error(
+        "دالة Gemini لم تُرجع نتيجة تحليل صالحة."
+    );
+}
 
 usedFallback =
 true;
