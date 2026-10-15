@@ -1290,18 +1290,34 @@ throw assignmentInsertError;
 }
 }
 
-const{error:taskUpdateError}=
-await supabaseClient
-.from("tasks")
-.update({
-assigned_employee_id:selectedEmployeeId
-})
-.eq("id",taskId);
+const { data: taskData, error: taskReadError } =
+    await supabaseClient
+    .from("tasks")
+    .select("assigned_employee_id")
+    .eq("id", taskId)
+    .single();
 
-if(taskUpdateError){
-throw taskUpdateError;
+if (taskReadError) {
+    throw taskReadError;
 }
 
+if (
+    String(taskData.assigned_employee_id) ===
+    String(oldDecision.selectedEmployeeId)
+) {
+    const { error: taskUpdateError } =
+        await supabaseClient
+        .from("tasks")
+        .update({
+            assigned_employee_id: selectedEmployeeId
+        })
+        .eq("id", taskId)
+        .eq("assigned_employee_id", oldDecision.selectedEmployeeId);
+
+    if (taskUpdateError) {
+        throw taskUpdateError;
+    }
+}
 localStorage.removeItem("pendingDecision");
 
 alert(
@@ -1387,18 +1403,25 @@ await supabaseClient
 throw assignmentInsertError;
 }
 
-const{error:taskUpdateError}=
-await supabaseClient
-.from("tasks")
-.update({
-assigned_employee_id:selectedEmployeeId
-})
-.eq("id",taskId);
+const task = tasks.find(
+    item => Number(item.id) === Number(taskId)
+);
 
-if(taskUpdateError){
-throw taskUpdateError;
+if (!task?.assigned_employee_id) {
+
+    const { error: taskUpdateError } =
+        await supabaseClient
+        .from("tasks")
+        .update({
+            assigned_employee_id: selectedEmployeeId
+        })
+        .eq("id", taskId)
+        .is("assigned_employee_id", null);
+
+    if (taskUpdateError) {
+        throw taskUpdateError;
+    }
 }
-
 localStorage.removeItem("pendingDecision");
 
 await loadTaskAssignments();
