@@ -4750,21 +4750,15 @@ window.addEventListener(
 
         try {
 
-            await Promise.all([
-
-                loadTaskAssignments(),
-
-                loadProjects(),
-
-                loadEmployees(),
-
-                loadTasks(),
-
-                loadEmployeeLeaves()
-
-            ]);
-
-
+     await Promise.all([
+    loadTaskAssignments(),
+    loadProjects(),
+    loadEmployees(),
+    loadTasks(),
+    loadSkills(),
+    loadEmployeeSkills(),
+    loadEmployeeLeaves()
+]);
             if (
                 selectedTask
                 &&
