@@ -3306,22 +3306,14 @@ null;
 
 }catch(edgeError){
 
-console.warn(
-"تعذر استخدام التحليل الخارجي، سيتم استخدام التحليل المحلي:",
-edgeError
-);
+    console.error(
+        "فشل تحليل المهمة باستخدام Gemini:",
+        edgeError
+    );
 
-
-usedFallback =
-true;
-
-
-analysis =
-buildLocalTaskAnalysis(
-taskName,
-description
-);
-
+    throw new Error(
+        "تعذر استخدام Gemini. افتحي سجلات analyze-project في Supabase لمعرفة سبب الخطأ."
+    );
 }
 
 
