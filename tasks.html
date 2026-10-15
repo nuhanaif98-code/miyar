@@ -1268,9 +1268,26 @@ throw error;
 }
 
 
-skills =
-data || [];
+const uniqueSkills = new Set();
 
+skills = (data || []).filter(skill => {
+
+    const name = String(skill.skill_name || "")
+        .trim()
+        .toLowerCase()
+        .replace(/[أإآ]/g, "ا")
+        .replace(/ة/g, "ه")
+        .replace(/ى/g, "ي")
+        .replace(/\s+/g, " ");
+
+    if (!name || uniqueSkills.has(name)) {
+        return false;
+    }
+
+    uniqueSkills.add(name);
+    return true;
+
+});
 }
 
 
