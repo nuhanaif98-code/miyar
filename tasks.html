@@ -6679,89 +6679,61 @@ closeSidebar();
 /* تشغيل الصفحة */
 /* ========================================= */
 
-async function initializePage(){
+async function initializePage() {
 
-try{
+    try {
 
-const allowed =
-await protectPage();
+        const allowed = await protectPage();
 
+        if (!allowed) {
+            return;
+        }
 
-if(
-!allowed
-){
+        // تحميل المهام أولًا
+        await loadTasks();
 
-return;
+        // تحميل البيانات المساعدة بشكل مستقل
+        const results = await Promise.allSettled([
+            loadProjects(),
+            loadEmployees(),
+            loadSkills(),
+            loadTaskAssignments()
+        ]);
 
+        results.forEach((result, index) => {
+            if (result.status === "rejected") {
+                console.error(
+                    "فشل تحميل البيانات المساعدة رقم " + (index + 1),
+                    result.reason
+                );
+            }
+        });
+
+        // تحديث أسماء المشاريع والموظفين
+        renderTasks();
+        updateSummary();
+
+        if (!requirementsContainer.children.length) {
+            addRequirementRow("", 3);
+        }
+
+        updateCriteriaTotal();
+
+    } catch (error) {
+
+        console.error(
+            "خطأ تحميل صفحة المهام:",
+            error
+        );
+
+        tasksGrid.innerHTML = `
+            <div class="empty-state">
+                تعذر تحميل بيانات المهام.
+                <p>${escapeHtml(error.message || "خطأ غير معروف")}</p>
+            </div>
+        `;
+    }
 }
-
-
-await Promise.all([
-
-loadProjects(),
-
-loadEmployees(),
-
-loadSkills()
-
-]);
-
-
-await loadTasks();
-
-
-await loadTaskAssignments();
-
-
-if(
-!requirementsContainer.children.length
-){
-
-addRequirementRow(
-"",
-3
-);
-
-}
-
-
-updateCriteriaTotal();
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-
-tasksGrid.innerHTML =
-`
-
-<div class="empty-state">
-
-تعذر تحميل بيانات صفحة المهام.
-
-<br>
-
-<small>
-
-${escapeHtml(
-error.message
-||
-""
-)}
-
-</small>
-
-</div>
-
-`;
-
-}
-
-}
-
 
 initializePage();
 
