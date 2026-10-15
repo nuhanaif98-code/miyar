@@ -2486,6 +2486,131 @@ async function openTaskAttachment(path) {
 }
 
 
+/* =========================================================
+   فريق المهمة - عرض الموظف
+========================================================= */
+
+async function showEmployeeTaskTeam(taskId) {
+
+    const container = document.getElementById("taskDetails");
+    if (!container) return;
+
+    const oldSection = container.querySelector(".employee-task-team");
+    if (oldSection) oldSection.remove();
+
+    const { data: team, error } = await supabaseClient
+        .from("task_assignments")
+        .select("id, employee_id, assigned_part, status")
+        .eq("task_id", Number(taskId))
+        .order("id", { ascending: true });
+
+    if (error) {
+        console.error("تعذر تحميل فريق المهمة:", error);
+        return;
+    }
+
+    if (!team || !team.length) return;
+
+    const employeeIds = [
+        ...new Set(team.map(member => member.employee_id))
+    ];
+
+    const { data: teamEmployees, error: employeesError } =
+        await supabaseClient
+            .from("employees")
+            .select("id, name, email")
+            .in("id", employeeIds);
+
+    if (employeesError) {
+        console.error("تعذر تحميل بيانات الفريق:", employeesError);
+        return;
+    }
+
+    // منع إظهار بيانات مهمة قديمة عند التنقل السريع
+    if (
+        !selectedTask ||
+        Number(selectedTask.taskId) !== Number(taskId)
+    ) {
+        return;
+    }
+
+    const section = document.createElement("div");
+
+    section.className =
+        "employee-task-team detail-item detail-full";
+
+    section.innerHTML = `
+        <div class="employee-team-title">
+            فريق المهمة (${team.length})
+        </div>
+
+        <p class="employee-team-description">
+            الأجزاء المسندة إلى أعضاء الفريق وحالة تنفيذ كل جزء.
+        </p>
+
+        <div class="employee-team-list">
+
+            ${team.map(member => {
+
+                const employee = (teamEmployees || []).find(
+                    e => Number(e.id) === Number(member.employee_id)
+                );
+
+                const isMe =
+                    Number(member.employee_id) === Number(employeeId);
+
+                const name =
+                    employee?.name || "موظف";
+
+                const email =
+                    employee?.email || "";
+
+                const status =
+                    normalizeAssignmentStatus(member.status);
+
+                const assignedPart =
+                    member.assigned_part ||
+                    "لم يحدد المسؤول الجزء بعد.";
+
+                return `
+                    <div class="employee-team-member ${isMe ? "my-team-part" : ""}">
+
+                        <div class="employee-team-member-header">
+                            <strong>
+                                ${escapeHtml(name)}
+                                ${isMe ? "(أنت)" : ""}
+                            </strong>
+
+                            <span class="employee-team-status ${getStatusClass(status)}">
+                                ${escapeHtml(status)}
+                            </span>
+                        </div>
+
+                        <div class="employee-team-email">
+                            ${escapeHtml(email)}
+                        </div>
+
+                        <div class="employee-assigned-part">
+                            <span>
+                                ${isMe ? "الجزء المطلوب منك" : "الجزء المسؤول عنه"}
+                            </span>
+
+                            <p>
+                                ${escapeHtml(assignedPart)}
+                            </p>
+                        </div>
+
+                    </div>
+                `;
+
+            }).join("")}
+
+        </div>
+    `;
+
+    container.appendChild(section);
+}
+
 
 /* =========================================================
    تفاصيل المهمة
@@ -2876,13 +3001,16 @@ function viewTask(
 
 
 
-    detailsModal
-        .classList
-        .add(
-            "show"
-        );
+   
+detailsModal
+    .classList
+    .add(
+        "show"
+    );
 
-
+// عرض فريق المهمة وأجزاء الموظفين
+showEmployeeTaskTeam(item.taskId);
+    
     document.body
         .classList
         .add(
