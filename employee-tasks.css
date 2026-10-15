@@ -2436,3 +2436,114 @@ input {
     }
 
 }
+
+/* =========================================
+   فريق المهمة - بوابة الموظف
+========================================= */
+
+.employee-task-team {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid rgba(185, 138, 77, 0.28);
+    border-radius: 12px;
+    background: #faf9f6;
+    text-align: right;
+}
+
+.employee-team-title {
+    color: #31576b;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.employee-team-description {
+    color: #82939b;
+    font-size: 10px;
+    line-height: 1.8;
+    margin: 0 0 13px;
+}
+
+.employee-team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.employee-team-member {
+    padding: 13px;
+    border: 1px solid rgba(185, 138, 77, 0.25);
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.employee-team-member.my-team-part {
+    background: #f5f4ef;
+    border-color: rgba(185, 138, 77, 0.45);
+}
+
+.employee-team-member-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.employee-team-member-header strong {
+    color: #31576b;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.employee-team-status {
+    padding: 5px 9px;
+    border-radius: 7px;
+    background: #f3eee7;
+    color: #8e704a;
+    font-size: 9px;
+}
+
+.employee-team-email {
+    margin-top: 7px;
+    color: #82939b;
+    font-size: 9px;
+    overflow-wrap: anywhere;
+}
+
+.employee-assigned-part {
+    margin-top: 12px;
+}
+
+.employee-assigned-part > span {
+    display: block;
+    margin-bottom: 7px;
+    color: #a37640;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.employee-assigned-part p {
+    margin: 0;
+    padding: 12px;
+    border: 1px solid #e6e0d7;
+    border-radius: 9px;
+    background: #fff;
+    color: #31576b;
+    font-size: 11px;
+    line-height: 1.9;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 520px) {
+    .employee-task-team {
+        padding: 11px;
+    }
+
+    .employee-team-member {
+        padding: 11px;
+    }
+}
