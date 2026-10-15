@@ -1953,41 +1953,48 @@ function getRequiredJobLevel() {
 
 function getRequiredSkills() {
 
+    const usedSkills = new Set();
+
     return taskRequirements
+        .filter(requirement => {
 
-    .filter(
-        requirement =>
-        requirement.skill_id !== null
-        &&
-        requirement.skill_id !== undefined
-    )
+            if (
+                requirement.skill_id === null ||
+                requirement.skill_id === undefined
+            ) {
+                return false;
+            }
 
-    .map(
-        requirement => ({
+            const skillId = Number(requirement.skill_id);
 
-            skillId:
-            Number(
-                requirement.skill_id
-            ),
+            if (
+                !Number.isFinite(skillId) ||
+                usedSkills.has(skillId)
+            ) {
+                return false;
+            }
 
-            skillName:
-            getSkillName(
+            usedSkills.add(skillId);
+
+            return true;
+
+        })
+        .map(requirement => ({
+
+            skillId: Number(requirement.skill_id),
+
+            skillName: getSkillName(
                 requirement.skill_id
             ),
 
             requiredLevel:
-            getLevelNumber(
-                requirement.required_level
-            )
-            ||
-            1
+                getLevelNumber(
+                    requirement.required_level
+                ) || 1
 
-        })
-    );
+        }));
 
 }
-
-
 /* =====================================================
    MATCHING WEIGHTS
 ===================================================== */
