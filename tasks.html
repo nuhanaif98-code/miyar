@@ -3223,10 +3223,7 @@ await supabaseClient
 
 body:{
 
-project_name:
-projectName
-||
-taskName,
+project_name: taskName,
 
 task_name:
 taskName,
@@ -3352,16 +3349,11 @@ suggestedSkills =
 }
 
 
-const existingManual =
-collectRequirements();
+const existingManual = [];
 
+const used = new Set();
 
-const used =
-new Set();
-
-
-const finalSkills =
-[];
+const finalSkills = [];
 
 
 existingManual.forEach(
@@ -3576,58 +3568,6 @@ existing.id
 );
 
 }
-
-
-const localAnalysis =
-buildLocalTaskAnalysis(
-taskName,
-description
-);
-
-
-(
-localAnalysis.skills
-||
-[]
-)
-.forEach(
-item => {
-
-if(
-used.has(
-String(
-item.skill_id
-)
-)
-){
-
-return;
-
-}
-
-
-finalSkills.push({
-
-skill_id:
-item.skill_id,
-
-required_level:
-item.required_level
-||
-3
-
-});
-
-
-used.add(
-String(
-item.skill_id
-)
-);
-
-}
-);
-
 
 requirementsContainer.innerHTML =
 "";
@@ -4438,10 +4378,21 @@ document.getElementById(
 ).value.trim();
 
 
-const requirements =
-collectRequirements();
+const selectedSkills = Array.from(
+  requirementsContainer.querySelectorAll(
+    ".requirement-skill"
+  )
+).map(select => select.value).filter(Boolean);
 
+if (
+  new Set(selectedSkills).size !==
+  selectedSkills.length
+) {
+  alert("لا يمكن اختيار نفس المهارة أكثر من مرة.");
+  return;
+}
 
+const requirements = collectRequirements();
 const weights =
 getCriteriaWeights();
 
