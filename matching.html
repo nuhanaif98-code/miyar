@@ -2577,160 +2577,91 @@ function calculateAvailabilityScore(
    REASON
 ===================================================== */
 
-function buildReason(
-    data
-) {
 
-    const reasons =
-    [];
+function buildReason(data) {
+    const reasons = [];
 
-
-    if (
-        data.currentLeave
-    ) {
-
+    if (data.currentLeave) {
         reasons.push(
             "الموظف في إجازة معتمدة حاليًا ولا يمكن إسناد المهمة له الآن"
         );
-
     }
 
+    const skillDetails = data.skillResult.skillDetails || [];
 
-    if (
-        data.skillResult.score >= 90
-    ) {
-
-        reasons.push(
-            "توافق مرتفع في المهارات المطلوبة"
+    if (skillDetails.length === 0) {
+        reasons.push("لا توجد مهارات محددة لهذه المهمة");
+    } else {
+        const matched = skillDetails.filter(
+            skill => skill.employeeLevel >= skill.requiredLevel
         );
 
-    }
-
-    else if (
-        data.skillResult.score >= 60
-    ) {
-
-        reasons.push(
-            "يحقق جزءًا جيدًا من متطلبات المهارات"
+        const needsImprovement = skillDetails.filter(
+            skill =>
+                skill.employeeLevel > 0 &&
+                skill.employeeLevel < skill.requiredLevel
         );
 
-    }
-
-    else {
-
-        reasons.push(
-            "يحتاج إلى تطوير بعض المهارات المطلوبة"
+        const missing = skillDetails.filter(
+            skill => skill.employeeLevel === 0
         );
 
+        if (matched.length > 0) {
+            reasons.push(
+                "يحقق المستوى المطلوب في: " +
+                matched.map(skill => skill.skillName).join("، ")
+            );
+        }
+
+        if (needsImprovement.length > 0) {
+            reasons.push(
+                "يحتاج إلى رفع مستواه في: " +
+                needsImprovement.map(skill => skill.skillName).join("، ")
+            );
+        }
+
+        if (missing.length > 0) {
+            reasons.push(
+                "مهارات غير مسجلة لديه: " +
+                missing.map(skill => skill.skillName).join("، ")
+            );
+        }
     }
 
-
-    if (
-        data.requiredExperience > 0
-    ) {
-
+    if (data.requiredExperience > 0) {
         if (
-            data.experienceResult.employeeExperience
-            >=
+            data.experienceResult.employeeExperience >=
             data.requiredExperience
         ) {
-
-            reasons.push(
-                "خبرته تحقق الخبرة المطلوبة"
-            );
-
+            reasons.push("خبرته تحقق الخبرة المطلوبة");
+        } else {
+            reasons.push("خبرته أقل من الخبرة المطلوبة");
         }
-
-        else if (
-            data.experienceResult.employeeExperience > 0
-        ) {
-
-            reasons.push(
-                "خبرته أقل من المطلوب ولكن لم يتم استبعاده من الترشيح"
-            );
-
-        }
-
-        else {
-
-            reasons.push(
-                "لا توجد خبرة مسجلة له، لذلك حصل على 0% في معيار الخبرة فقط"
-            );
-
-        }
-
     }
 
-
-    if (
-        data.requiredJobLevel
-    ) {
-
-        if (
-            data.jobLevelResult.score >= 100
-        ) {
-
-            reasons.push(
-                "مستواه الوظيفي يحقق المطلوب"
-            );
-
+    if (data.requiredJobLevel) {
+        if (data.jobLevelResult.score >= 100) {
+            reasons.push("مستواه الوظيفي يحقق المطلوب");
+        } else {
+            reasons.push("مستواه الوظيفي أقل من المطلوب");
         }
-
-        else {
-
-            reasons.push(
-                "مستواه الوظيفي أقل من المستوى المطلوب"
-            );
-
-        }
-
     }
 
+    if (data.availabilityResult.score >= 100) {
+        reasons.push("تفرغه يحقق متطلبات المهمة");
+    } else if (!data.currentLeave) {
+        reasons.push("تفرغه أقل من النسبة المطلوبة");
+    }
 
-    if (
-        data.availabilityResult.score >= 100
-    ) {
-
+    if (data.taskCount > 0) {
         reasons.push(
-            "تفرغه يحقق متطلبات المهمة"
+            `لديه ${data.taskCount} مهام نشطة حاليًا، وضغط العمل التقديري ${data.workload}%`
         );
-
+    } else {
+        reasons.push("لا توجد لديه مهام نشطة حاليًا");
     }
 
-    else if (
-        !data.currentLeave
-    ) {
-
-        reasons.push(
-            "تفرغه أقل من النسبة المطلوبة بسبب المهام الحالية"
-        );
-
-    }
-
-
-    if (
-        data.taskCount > 0
-    ) {
-
-        reasons.push(
-            `لديه ${data.taskCount} مهام نشطة حاليًا وضغط العمل ${data.workload}%`
-        );
-
-    }
-
-    else {
-
-        reasons.push(
-            "لا توجد لديه مهام نشطة حاليًا"
-        );
-
-    }
-
-
-    return reasons.join(
-        " • "
-    );
-
+    return reasons.join(" • ");
 }
 
 
