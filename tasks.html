@@ -4660,6 +4660,150 @@ error.message
 /* تفاصيل المهمة */
 /* ========================================= */
 
+/* =========================================
+   فريق المهمة - منصة معيار
+========================================= */
+
+async function showAdminTaskTeam(taskId) {
+
+    const container = document.getElementById("taskDetails");
+    if (!container) return;
+
+    const oldSection = container.querySelector(".task-team-section");
+    if (oldSection) oldSection.remove();
+
+    const { data, error } = await supabaseClient
+        .from("task_assignments")
+        .select("id, employee_id, assigned_part, status")
+        .eq("task_id", Number(taskId))
+        .order("id", { ascending: true });
+
+    if (error) {
+        console.error("خطأ تحميل فريق المهمة:", error);
+        return;
+    }
+
+    const team = data || [];
+    if (!team.length) return;
+
+    const section = document.createElement("div");
+    section.className = "task-team-section";
+    section.style.gridColumn = "1 / -1";
+
+    section.innerHTML = `
+        <div class="detail-section-title">
+            فريق المهمة (${team.length})
+        </div>
+
+        <p>حددي الجزء المسؤول عنه كل موظف ثم اضغطي حفظ.</p>
+
+        ${team.map(member => {
+
+            const employee = employees.find(
+                item => Number(item.id) === Number(member.employee_id)
+            );
+
+            const name = employee?.full_name ||
+                         employee?.name ||
+                         "موظف غير معروف";
+
+            const email = employee?.email || "";
+
+            const status = translateTaskStatus(member.status);
+
+            return `
+                <div class="task-team-member"
+                     style="padding:14px;margin-top:12px;border:1px solid #ded5c7;border-radius:10px;">
+
+                    <strong>${escapeHtml(name)}</strong>
+
+                    <div style="font-size:11px;margin-top:5px;">
+                        ${escapeHtml(email)}
+                    </div>
+
+                    <div style="font-size:11px;margin-top:5px;">
+                        الحالة: ${escapeHtml(status)}
+                    </div>
+
+                    <label style="display:block;margin-top:12px;">
+                        الجزء المسؤول عنه
+                    </label>
+
+                    <textarea
+                        id="assigned-part-${member.id}"
+                        style="width:100%;min-height:75px;padding:10px;border:1px solid #ded5c7;border-radius:8px;box-sizing:border-box;"
+                        placeholder="اكتبي الجزء المطلوب من الموظف"
+                    >${escapeHtml(member.assigned_part || "")}</textarea>
+
+                    <button
+                        type="button"
+                        class="save-btn"
+                        onclick="saveAssignedPart(${Number(member.id)})"
+                        style="margin-top:10px;"
+                    >
+                        حفظ الجزء
+                    </button>
+
+                </div>
+            `;
+        }).join("")}
+    `;
+
+    container.appendChild(section);
+}
+
+/* =========================================
+   حفظ الجزء المسؤول عنه الموظف
+========================================= */
+
+async function saveAssignedPart(assignmentId) {
+
+    const input = document.getElementById(
+        `assigned-part-${assignmentId}`
+    );
+
+    if (!input) return;
+
+    const button = input.parentElement.querySelector("button");
+    if (button) button.disabled = true;
+
+    try {
+
+        const assignedPart = input.value.trim();
+
+        const { data, error } = await supabaseClient
+            .from("task_assignments")
+            .update({
+                assigned_part: assignedPart || null
+            })
+            .eq("id", Number(assignmentId))
+            .select("id, assigned_part")
+            .single();
+
+        if (error) throw error;
+
+        const assignment = taskAssignments.find(
+            item => Number(item.id) === Number(data.id)
+        );
+
+        if (assignment) {
+            assignment.assigned_part = data.assigned_part;
+        }
+
+        alert("تم حفظ الجزء المسؤول عنه بنجاح.");
+
+    } catch (error) {
+
+        console.error("خطأ حفظ الجزء:", error);
+        alert("تعذر حفظ الجزء المسؤول عنه.");
+
+    } finally {
+
+        if (button) button.disabled = false;
+
+    }
+}
+
 async function openTaskDetails(taskId) {
 
     try {
@@ -4983,6 +5127,7 @@ detailsContainer.innerHTML = `
 
 
         detailsModal.classList.add("show");
+        await showAdminTaskTeam(taskId);
 
         document.body.classList.add(
             "modal-open"
@@ -5387,6 +5532,7 @@ await supabaseClient
 id,
 task_id,
 employee_id,
+assigned_part,
 status,
 started_at,
 submitted_at,
