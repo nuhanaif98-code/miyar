@@ -3153,13 +3153,27 @@ async function startTask(
 
     }
 
+const taskId = data[0].task_id;
 
-    closeConfirmModal();
+const { error: taskError } = await supabaseClient
+    .from("tasks")
+    .update({
+        status: "in_progress"
+    })
+    .eq("id", taskId)
+    .in("status", ["new", "planned", "جديدة", "مخططة"])
+    .select();
 
-    closeDetailsModal();
+if (taskError) {
+    console.error("تعذر تحديث حالة المهمة العامة:", taskError);
+    alert("بدأ الموظف المهمة، لكن تعذر تحديث حالتها العامة.");
+}
 
+closeConfirmModal();
 
-    await refreshPageData();
+closeDetailsModal();
+
+await refreshPageData();
 
 }
 
