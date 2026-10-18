@@ -1012,8 +1012,7 @@ button {
 
 
 .modal-header {
-    display: flex;
-
+   display: none;
     justify-content: space-between;
     align-items: flex-start;
 
