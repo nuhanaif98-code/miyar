@@ -1667,3 +1667,41 @@ background: linear-gradient(
     }
 
 }
+
+
+/* فريق المشروع */
+
+.project-team-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+    color: #718692;
+    font-size: 9px;
+}
+
+.team-task-card {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    padding: 12px;
+
+    border: 1px solid rgba(185, 138, 77, 0.25);
+    border-right: 3px solid #b98a4d;
+    border-radius: 10px;
+
+    background: rgba(249, 247, 242, 0.75);
+}
+
+.team-task-card strong {
+    color: #31586c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.team-task-card span {
+    color: #718692;
+    font-size: 9px;
+    line-height: 1.7;
+}
