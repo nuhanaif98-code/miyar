@@ -2205,17 +2205,16 @@ async function loadProjectTeam(projectId) {
         const { data: employeesData, error: employeesError } =
             await supabaseClient
                 .from("employees")
-                .select("id, name")
+                .select("id, name, email")
                 .in("id", employeeIds);
 
         if (employeesError) throw employeesError;
 
-        const employeeMap = new Map(
-            (employeesData || []).map(
-                employee => [String(employee.id), employee.name]
-            )
-        );
-
+       const employeeMap = new Map(
+    (employeesData || []).map(
+        employee => [String(employee.id), employee]
+    )
+);
         const taskMap = new Map(
             tasks.map(task => [String(task.id), task])
         );
@@ -2229,10 +2228,15 @@ async function loadProjectTeam(projectId) {
 
             const task = taskMap.get(String(item.task_id));
 
-            const employeeName =
-                employeeMap.get(String(item.employee_id)) ||
-                "موظف غير متاح";
+           const employee =
+    employeeMap.get(String(item.employee_id));
 
+const employeeName =
+    employee?.name || "موظف غير متاح";
+
+const employeeEmail =
+    employee?.email || "";
+            
             const taskName =
                 task?.task_name || "مهمة غير محددة";
 
@@ -2250,6 +2254,16 @@ async function loadProjectTeam(projectId) {
             return `
                 <div class="team-task-card">
                     <strong>${escapeHtml(employeeName)}</strong>
+                    ${
+    employeeEmail
+        ? `<span>
+            البريد الإلكتروني:
+            <a href="mailto:${escapeHtml(employeeEmail)}">
+                ${escapeHtml(employeeEmail)}
+            </a>
+           </span>`
+        : `<span>البريد الإلكتروني: غير محدد</span>`
+}
                     <span>المهمة: ${escapeHtml(taskName)}</span>
                     <span>الحالة: ${escapeHtml(taskStatus)}</span>
                     <span>موعد التسليم: ${escapeHtml(dueDate)}</span>
