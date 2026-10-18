@@ -5256,151 +5256,96 @@ document.body.classList.remove(
 }
 
 
-async function saveExtension(
-event
-){
 
-event.preventDefault();
+async function saveExtension(event) {
+    event.preventDefault();
 
+    const taskId = Number(
+        document.getElementById("extensionTaskId").value
+    );
 
-const taskId =
-Number(
-document.getElementById(
-"extensionTaskId"
-).value
-);
+    const newDueDate = document.getElementById("newDueDate").value;
 
+    const reason = document.getElementById("extensionReason").value.trim();
 
-const oldDueDate =
-document.getElementById(
-"oldDueDate"
-).value;
+    if (!taskId || !newDueDate || !reason) {
+        alert("أكمل بيانات التمديد.");
+        return;
+    }
 
+    const saveBtn = document.getElementById("saveExtensionBtn");
+    saveBtn.disabled = true;
 
-const newDueDate =
-document.getElementById(
-"newDueDate"
-).value;
+    try {
+        // قراءة بيانات المهمة الحالية من قاعدة البيانات
+        const { data: task, error: fetchError } =
+            await supabaseClient
+                .from("tasks")
+                .select("id, due_date, original_due_date, extension_count")
+                .eq("id", taskId)
+                .single();
 
+        if (fetchError) throw fetchError;
 
-const reason =
-document.getElementById(
-"extensionReason"
-).value.trim();
+        if (!task.due_date) {
+            throw new Error("المهمة ليس لها تاريخ استحقاق.");
+        }
 
+        if (newDueDate <= task.due_date) {
+            alert("يجب أن يكون الموعد الجديد بعد الموعد الحالي.");
+            return;
+        }
 
-if(
-!taskId
-||
-!newDueDate
-||
-!reason
-){
+        // تجهيز بيانات التمديد
+        const extensionData = {
+            due_date: newDueDate,
 
-alert(
-"أكمل بيانات التمديد."
-);
+            original_due_date:
+                task.original_due_date || task.due_date,
 
-return;
+            extension_reason: reason,
 
+            extended_at: new Date().toISOString(),
+
+            extension_count:
+                Number(task.extension_count || 0) + 1
+        };
+
+        // حفظ جميع البيانات في جدول tasks
+        const { data: updatedTask, error: updateError } =
+            await supabaseClient
+                .from("tasks")
+                .update(extensionData)
+                .eq("id", taskId)
+                .eq("due_date", task.due_date)
+                .select("id")
+                .single();
+
+        if (updateError) throw updateError;
+
+        if (!updatedTask) {
+            throw new Error("لم يتم تأكيد حفظ التمديد.");
+        }
+
+        closeExtensionModal();
+
+        await loadTasks();
+
+        alert("تم تمديد موعد المهمة وحفظ البيانات بنجاح.");
+
+    } catch (error) {
+        console.error("خطأ حفظ التمديد:", error);
+
+        alert(
+            "تعذر حفظ تمديد المهمة.\n\n" +
+            (error.message || "")
+        );
+
+    } finally {
+        saveBtn.disabled = false;
+    }
 }
 
-
-try{
-
-const {
-error:updateError
-} =
-await supabaseClient
-.from("tasks")
-.update({
-
-due_date:
-newDueDate
-
-})
-.eq(
-"id",
-taskId
-);
-
-
-if(
-updateError
-){
-
-throw updateError;
-
-}
-
-
-const {
-error:extensionError
-} =
-await supabaseClient
-.from("task_extensions")
-.insert({
-
-task_id:
-taskId,
-
-old_due_date:
-oldDueDate
-||
-null,
-
-new_due_date:
-newDueDate,
-
-reason:
-reason
-
-});
-
-
-if(
-extensionError
-){
-
-console.warn(
-"تم تحديث تاريخ المهمة ولكن تعذر حفظ سجل التمديد:",
-extensionError
-);
-
-}
-
-
-closeExtensionModal();
-
-
-await loadTasks();
-
-
-alert(
-"تم تمديد موعد المهمة."
-);
-
-
-}catch(error){
-
-console.error(
-error
-);
-
-
-alert(
-"تعذر تمديد المهمة.\n\n"
-+
-(
-error.message
-||
-""
-)
-);
-
-}
-
-}
 
 
 /* ========================================= */
