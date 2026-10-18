@@ -2059,13 +2059,25 @@ function viewProject(id) {
             </div>
 
         </div>
+        
 ${
     project.isProjectManager
         ? `
-            DIL0
+            <div class="detail-item full-detail">
+                <span>فريق المشروع والمهام المسندة</span>
+
+                <div
+                    class="project-team-list"
+                    id="projectTeamList"
+                    data-project-id="${project.id}"
+                >
+                    جارٍ تحميل بيانات الفريق...
+                </div>
+            </div>
         `
         : ""
 }
+
 
     `;
 
