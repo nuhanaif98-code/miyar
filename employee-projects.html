@@ -1122,6 +1122,32 @@ async function loadProjects() {
         );
     });
 
+const managerIds = [
+    ...new Set(
+        [...uniqueProjects.values()]
+            .map(project => project.project_manager_id)
+            .filter(id => id != null)
+    )
+];
+
+let managerEmails = new Map();
+
+if (managerIds.length) {
+    const { data, error } = await supabaseClient
+        .from("employees")
+        .select("id, email")
+        .in("id", managerIds);
+
+    if (error) throw error;
+
+    managerEmails = new Map(
+        (data || []).map(employee => [
+            String(employee.id),
+            employee.email
+        ])
+    );
+}
+
     projects = [...uniqueProjects.values()]
         .sort((a, b) => Number(b.id) - Number(a.id))
         .map(project => {
@@ -1139,7 +1165,8 @@ async function loadProjects() {
 
             return {
                 ...project,
-
+managerEmail:
+    managerEmails.get(String(project.project_manager_id)) || "",
                 isProjectManager:
                     String(project.project_manager_id) ===
                     String(employeeId),
@@ -1931,6 +1958,22 @@ function viewProject(id) {
             </strong>
 
         </div>
+
+<div class="detail-item">
+    <span>البريد الإلكتروني لمدير المشروع</span>
+
+    <strong>
+        ${
+            project.managerEmail
+                ? `
+                    <a href="mailto:${escapeHtml(project.managerEmail)}">
+                        ${escapeHtml(project.managerEmail)}
+                    </a>
+                `
+                : "غير محدد"
+        }
+    </strong>
+</div>
 
 
 
