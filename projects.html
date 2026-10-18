@@ -2219,58 +2219,24 @@ async function saveProject(event) {
 
     try {
 
+const payload = {
+    project_name: projectName,
+    project_manager: projectManager,
+    project_manager_id: projectManagerId,
+    description: description,
+    start_date: startDate,
+    end_date: endDate || null,
+    status: projectStatus
+};
 
-        const payload = {
-
-
-            project_name:
-                projectName,
-
-
-            project_manager:
-                projectManager,
-
-
-            project_manager_id:
-                projectManagerId,
+        if ( editProjectId  ) {
 
 
-            description:
-                description,
+            const { error } =  await supabaseClient
 
+                    .from( "projects" )
 
-            start_date:
-                startDate,
-
-
-            end_date:
-                endDate || null,
-
-
-            status:
-                projectStatus
-
-
-        };
-
-
-        if (
-            editProjectId
-        ) {
-
-
-            const {
-                error
-            } =
-                await supabaseClient
-
-                    .from(
-                        "projects"
-                    )
-
-                    .update(
-                        payload
-                    )
+                    .update( payload)
 
                     .eq(
                         "id",
