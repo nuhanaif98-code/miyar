@@ -2059,7 +2059,13 @@ function viewProject(id) {
             </div>
 
         </div>
-
+${
+    project.isProjectManager
+        ? `
+            DIL0
+        `
+        : ""
+}
 
     `;
 
@@ -2068,7 +2074,9 @@ function viewProject(id) {
         "show"
     );
 
-
+if (project.isProjectManager) {
+    loadProjectTeam(project.id);
+}
     document.body.classList.add(
         "menu-open"
     );
@@ -2076,6 +2084,135 @@ function viewProject(id) {
 }
 
 
+
+/* =========================================================
+   فريق المشروع - يظهر لمدير المشروع فقط
+========================================================= */
+
+async function loadProjectTeam(projectId) {
+
+    const container =
+        document.getElementById("projectTeamList");
+
+    if (!container) return;
+
+    const project = projects.find(
+        item => String(item.id) === String(projectId)
+    );
+
+    if (
+        !project ||
+        String(project.project_manager_id) !== String(employeeId)
+    ) {
+        return;
+    }
+
+    try {
+
+        const { data: tasks, error: tasksError } =
+            await supabaseClient
+                .from("tasks")
+                .select("id, task_name, status, due_date, project_id")
+                .eq("project_id", projectId);
+
+        if (tasksError) throw tasksError;
+
+        if (!tasks?.length) {
+            container.textContent =
+                "لا توجد مهام في هذا المشروع.";
+            return;
+        }
+
+        const taskIds = tasks.map(task => task.id);
+
+        const { data: assignmentsData, error: assignmentsError } =
+            await supabaseClient
+                .from("task_assignments")
+                .select("task_id, employee_id, status")
+                .in("task_id", taskIds);
+
+        if (assignmentsError) throw assignmentsError;
+
+        const teamAssignments = assignmentsData || [];
+
+        if (!teamAssignments.length) {
+            container.textContent =
+                "لا يوجد موظفون مسندة لهم مهام حاليًا.";
+            return;
+        }
+
+        const employeeIds = [
+            ...new Set(
+                teamAssignments.map(item => item.employee_id)
+            )
+        ];
+
+        const { data: employeesData, error: employeesError } =
+            await supabaseClient
+                .from("employees")
+                .select("id, name")
+                .in("id", employeeIds);
+
+        if (employeesError) throw employeesError;
+
+        const employeeMap = new Map(
+            (employeesData || []).map(
+                employee => [String(employee.id), employee.name]
+            )
+        );
+
+        const taskMap = new Map(
+            tasks.map(task => [String(task.id), task])
+        );
+
+        if (
+            !document.getElementById("projectTeamList") ||
+            container.dataset.projectId !== String(projectId)
+        ) return;
+
+        container.innerHTML = teamAssignments.map(item => {
+
+            const task = taskMap.get(String(item.task_id));
+
+            const employeeName =
+                employeeMap.get(String(item.employee_id)) ||
+                "موظف غير متاح";
+
+            const taskName =
+                task?.task_name || "مهمة غير محددة";
+
+            const taskStatus =
+                getTaskStatusText({
+                    ...task,
+                    assignment: { status: item.status }
+                });
+
+            const dueDate =
+                task?.due_date
+                    ? formatDate(task.due_date)
+                    : "غير محدد";
+
+            return `
+                <div class="team-task-card">
+                    <strong>${escapeHtml(employeeName)}</strong>
+                    <span>المهمة: ${escapeHtml(taskName)}</span>
+                    <span>الحالة: ${escapeHtml(taskStatus)}</span>
+                    <span>موعد التسليم: ${escapeHtml(dueDate)}</span>
+                </div>
+            `;
+
+        }).join("");
+
+    } catch (error) {
+
+        console.error("خطأ تحميل فريق المشروع:", error);
+
+        if (container.isConnected) {
+            container.textContent =
+                "تعذر تحميل بيانات الفريق. تحققي من صلاحيات القراءة في Supabase.";
+        }
+    }
+}
 
 /* =========================================================
    إغلاق التفاصيل
