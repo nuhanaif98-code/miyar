@@ -1384,6 +1384,33 @@ employee?.email
 
 }
 
+    function getTaskAssignedEmployees(taskId) {
+
+    const assignedIds = [
+        ...new Set(
+            taskAssignments
+                .filter(item =>
+                    Number(item.task_id) === Number(taskId)
+                )
+                .map(item => Number(item.employee_id))
+                .filter(Boolean)
+        )
+    ];
+
+    if (!assignedIds.length) {
+        const task = tasks.find(
+            item => Number(item.id) === Number(taskId)
+        );
+
+        return task?.assignedEmployeeId
+            ? getEmployeeName(task.assignedEmployeeId)
+            : "غير مسند";
+    }
+
+    return assignedIds
+        .map(id => getEmployeeName(id))
+        .join("، ");
+}
 
 function getProjectName(id){
 
@@ -1892,16 +1919,18 @@ task.projectId
 
 
 <div class="info-item">
-
 <span>
-الموظف
+${
+    taskAssignments.filter(
+        item => Number(item.task_id) === Number(task.id)
+    ).length > 1
+        ? "الموظفون المسندون"
+        : "الموظف المسند"
+}
 </span>
-
 <strong>
 ${escapeHtml(
-getEmployeeName(
-task.assignedEmployeeId
-)
+    getTaskAssignedEmployees(task.id)
 )}
 </strong>
 
@@ -4659,11 +4688,6 @@ error.message
 /* ========================================= */
 /* تفاصيل المهمة */
 /* ========================================= */
-
-/* =========================================
-   فريق المهمة - منصة معيار
-========================================= */
-
 async function showAdminTaskTeam(taskId) {
 
     const container = document.getElementById("taskDetails");
@@ -4985,18 +5009,12 @@ detailsContainer.innerHTML = `
     </div>
 
 
-    <div class="detail-item">
-        <span>الموظف المسند</span>
+       <div class="detail-item">
+        <span>الموظفون المسندون</span>
         <strong>
-            ${
-                assignedEmployeeId
-                    ? escapeHtml(
-                        getEmployeeName(
-                            assignedEmployeeId
-                        )
-                    )
-                    : "غير مسند"
-            }
+            ${escapeHtml(
+                getTaskAssignedEmployees(taskId)
+            )}
         </strong>
     </div>
 
