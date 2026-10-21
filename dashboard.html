@@ -1075,14 +1075,14 @@ async function loadDecisions() {
             decision_date,
             created_at
         `)
-        .order(
-            "created_at",
-            {
-                ascending: false
-            }
-        )
-        .limit(10);
-
+       .order("created_at", {
+    ascending: false,
+    nullsFirst: false
+})
+.order("id", {
+    ascending: false
+})
+.limit(50);
 
     if (error) {
 
@@ -2424,6 +2424,35 @@ async function startDashboard() {
 
 
 startDashboard();
+    let dashboardRefreshing = false;
+
+async function refreshDashboard() {
+
+    if (dashboardRefreshing || document.hidden) {
+        return;
+    }
+
+    dashboardRefreshing = true;
+
+    try {
+        await loadDashboardData();
+    } finally {
+        dashboardRefreshing = false;
+    }
+}
+
+// تحديث تلقائي كل 10 ثوانٍ
+setInterval(refreshDashboard, 10000);
+
+// تحديث عند الرجوع للصفحة
+document.addEventListener(
+    "visibilitychange",
+    () => {
+        if (!document.hidden) {
+            refreshDashboard();
+        }
+    }
+);
 
 
 </script>
